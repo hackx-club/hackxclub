@@ -4,7 +4,7 @@ import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/terms")({
   staticData: { sitemap: true },
-  head: () => pageHead("/terms", "Terms of Use | HackX", "Terms for using hackx.club and joining HackX events."),
+  head: () => pageHead("/terms", "Terms of Use | HackX", "Terms for using hackx.club and joining HackX events.", { crumb: "Terms of Use" }),
   component: TermsPage,
 });
 

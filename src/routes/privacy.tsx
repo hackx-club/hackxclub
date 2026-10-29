@@ -4,7 +4,7 @@ import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/privacy")({
   staticData: { sitemap: true },
-  head: () => pageHead("/privacy", "Privacy Policy | HackX", "How HackX collects and uses your information."),
+  head: () => pageHead("/privacy", "Privacy Policy | HackX", "How HackX collects and uses your information.", { crumb: "Privacy Policy" }),
   component: PrivacyPage,
 });
 

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from "react";
-import { whatsappUrl } from "@/config/site";
+import { Link } from "@tanstack/react-router";
 
 const HeroScene = lazy(() => import("./HeroScene"));
 
@@ -36,24 +36,18 @@ export function Hero() {
       </div>
       <div className="hero-vignette pointer-events-none absolute inset-0" />
 
-      <div className="relative z-10 mt-[38vh] flex flex-col items-center md:mt-[42vh]">
-        <p className="eyebrow animate-in fade-in slide-in-from-bottom-2 duration-700">
-          28 December 2026 · 12-hour hackathon
-        </p>
-        <h1 className="display-xl text-chrome mt-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-          HackX 1.0
+      <div className="relative z-10 mt-[30vh] flex flex-col items-center md:mt-[34vh]">
+        <p className="eyebrow animate-in fade-in duration-700">Student &amp; founder tech club · India</p>
+        <h1 className="headline-xl text-chrome mt-5 max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
+          Where students build what's next.
         </h1>
-        <p className="mt-5 text-lg text-muted-foreground md:text-2xl animate-in fade-in duration-1000 delay-300 fill-mode-both">
-          12 hours. Build something real.
+        <p className="mt-6 max-w-xl text-lg text-muted-foreground md:text-xl animate-in fade-in duration-700 delay-500 fill-mode-both">
+          HackX brings student builders and founders together to ship real things.
         </p>
-        <a
-          href={whatsappUrl()}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-silver mt-10 animate-in fade-in duration-1000 delay-500 fill-mode-both"
-        >
-          Register on WhatsApp
-        </a>
+        <div className="mt-10 flex flex-wrap justify-center gap-3 animate-in fade-in duration-700 delay-700 fill-mode-both">
+          <Link to="/register" className="btn-silver">Register for HackX 1.0 <span className="arrow">→</span></Link>
+          <Link to="/contact" className="btn-ghost">Contact us</Link>
+        </div>
       </div>
     </header>
   );

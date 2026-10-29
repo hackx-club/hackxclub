@@ -4,7 +4,7 @@ import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/events/")({
   staticData: { sitemap: true },
-  head: () => pageHead("/events", "Events | HackX", "All HackX hackathons, upcoming and past. HackX 1.0 is on 28 December 2026."),
+  head: () => pageHead("/events", "Events | HackX", "All HackX hackathons, upcoming and past. HackX 1.0 is on 28 December 2026.", { crumb: "Events" }),
   component: EventsPage,
 });
 
@@ -17,7 +17,7 @@ function EventsPage() {
           <Card>
             <p className="eyebrow">28 December 2026 · 12 hours</p>
             <h3 className="mt-3 text-2xl font-semibold">HackX 1.0</h3>
-            <p className="mt-2 text-muted-foreground">₹20,000+ prize pool · Food included · Venue to be announced</p>
+            <p className="mt-2 text-muted-foreground">Over ₹20,000 prize pool · Food included · Venue [TO BE ANNOUNCED]</p>
             <p className="mt-4 text-sm underline underline-offset-4">View details →</p>
           </Card>
         </Link>
