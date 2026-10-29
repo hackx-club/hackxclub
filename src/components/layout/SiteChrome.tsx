@@ -25,7 +25,6 @@ export function Logo() {
 
 const nav = [
   { to: "/events", label: "Events" },
-  { to: "/community", label: "Community" },
   { to: "/about", label: "About" },
   { to: "/partner", label: "Partner" },
   { to: "/contact", label: "Contact" },
@@ -42,15 +41,13 @@ export function SiteNav() {
             <Link
               key={n.to}
               to={n.to}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-sm text-foreground" }}
+              className="nav-link text-sm text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "text-foreground" }}
             >
               {n.label}
             </Link>
           ))}
-          <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="btn-silver btn-sm">
-            Register
-          </a>
+          <Link to="/register" className="btn-silver btn-sm">Register</Link>
         </div>
         <button
           className="text-sm md:hidden"
@@ -68,9 +65,7 @@ export function SiteNav() {
               {n.label}
             </Link>
           ))}
-          <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="btn-silver btn-sm self-start">
-            Register
-          </a>
+          <Link to="/register" onClick={() => setOpen(false)} className="btn-silver btn-sm self-start">Register</Link>
         </div>
       )}
     </nav>
@@ -84,7 +79,7 @@ export function SiteFooter() {
         <div className="md:col-span-2">
           <Logo />
           <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-            A student hackathon community. HackX 1.0 on 28 December 2026.
+            A student and founder tech club in India. We run hackathons and founder meetups.
           </p>
         </div>
         <div className="flex flex-col gap-2 text-sm">
@@ -97,6 +92,7 @@ export function SiteFooter() {
         </div>
         <div className="flex flex-col gap-2 text-sm">
           <p className="eyebrow mb-2">Legal</p>
+          <Link to="/register" className="text-muted-foreground hover:text-foreground">Register</Link>
           <Link to="/privacy" className="text-muted-foreground hover:text-foreground">Privacy</Link>
           <Link to="/terms" className="text-muted-foreground hover:text-foreground">Terms</Link>
         </div>
@@ -115,7 +111,7 @@ export function WhatsAppFab() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with HackX on WhatsApp"
-      className="fab-whatsapp"
+      className="fab-whatsapp hidden md:grid"
     >
       <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden>
         <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4a.5.5 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.7-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.2-.3-.2-.5-.3Z" />
@@ -126,9 +122,9 @@ export function WhatsAppFab() {
 
 export function PageHeader({ eyebrow, title, intro }: { eyebrow: string; title: string; intro?: ReactNode }) {
   return (
-    <header className="mx-auto max-w-6xl px-6 pb-12 pt-20 md:pt-28">
+    <header className="mx-auto max-w-6xl px-6 pb-12 pt-20 md:pt-28" data-reveal>
       <p className="eyebrow">{eyebrow}</p>
-      <h1 className="text-chrome mt-4 text-5xl font-bold tracking-tight md:text-7xl">{title}</h1>
+      <h1 className="text-chrome headline-xl mt-4">{title}</h1>
       {intro && <p className="mt-6 max-w-2xl text-lg text-muted-foreground">{intro}</p>}
     </header>
   );
@@ -144,5 +140,50 @@ export function Section({ title, children }: { title?: string; children: ReactNo
 }
 
 export function Card({ children }: { children: ReactNode }) {
-  return <div className="rounded-xl border border-border bg-card p-6">{children}</div>;
+  return <div className="card-lift rounded-xl border border-border bg-card p-6" data-reveal>{children}</div>;
+}
+
+export function MobileBar() {
+  return (
+    <div className="mobile-bar md:hidden">
+      <Link to="/register" className="btn-silver btn-sm flex-1 justify-center">Register</Link>
+      <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="btn-ghost flex-1 justify-center">WhatsApp</a>
+    </div>
+  );
+}
+
+export function SectionHeading({ eyebrow, title, children }: { eyebrow?: string; title: string; children?: ReactNode }) {
+  return (
+    <div className="mb-10 max-w-3xl" data-reveal>
+      {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+      <h2 className="headline-lg mt-3">{title}</h2>
+      {children && <p className="mt-5 text-lg text-muted-foreground">{children}</p>}
+    </div>
+  );
+}
+
+export function CtaBanner({ title, body }: { title: string; body?: string }) {
+  return (
+    <section className="mx-auto max-w-6xl px-6 py-24 text-center" data-reveal>
+      <h2 className="headline-lg mx-auto max-w-3xl">{title}</h2>
+      {body && <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">{body}</p>}
+      <div className="mt-10 flex flex-wrap justify-center gap-3">
+        <Link to="/register" className="btn-silver">Register for HackX 1.0 <span className="arrow">→</span></Link>
+        <Link to="/contact" className="btn-ghost">Contact us</Link>
+      </div>
+    </section>
+  );
+}
+
+export function SponsorMarquee() {
+  const slots = Array.from({ length: 8 }, (_, i) => i);
+  return (
+    <div className="marquee" aria-label="Sponsor slots, to be announced">
+      <div className="marquee-track">
+        {[...slots, ...slots].map((i, k) => (
+          <div key={k} className="sponsor-slot" aria-hidden={k >= slots.length}>Sponsor [TBA]</div>
+        ))}
+      </div>
+    </div>
+  );
 }

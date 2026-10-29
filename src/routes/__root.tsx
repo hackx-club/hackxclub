@@ -12,7 +12,9 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { SiteNav, SiteFooter, WhatsAppFab } from "@/components/layout/SiteChrome";
+import { SiteNav, SiteFooter, WhatsAppFab, MobileBar } from "@/components/layout/SiteChrome";
+import { Motion } from "@/components/layout/Motion";
+import { site } from "@/config/site";
 import "@/lib/sitemap";
 
 function NotFoundComponent() {
@@ -84,6 +86,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "HackX" },
       { name: "theme-color", content: "#0b0b0b" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: site.name,
+          url: site.url,
+          logo: `${site.url}/favicon.svg`,
+          description: "A student and founder tech club in India.",
+        }),
+      },
+    ],
     links: [
       {
         rel: "stylesheet",
@@ -126,6 +141,8 @@ function RootComponent() {
       <Outlet />
       <SiteFooter />
       <WhatsAppFab />
+      <MobileBar />
+      <Motion />
     </QueryClientProvider>
   );
 }
