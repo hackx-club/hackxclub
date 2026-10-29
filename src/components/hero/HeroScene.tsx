@@ -20,7 +20,7 @@ function ChromeX({ small }: { small: boolean }) {
     <meshPhysicalMaterial color="#d9dce1" metalness={1} roughness={0.12} clearcoat={1} clearcoatRoughness={0.08} />
   );
   return (
-    <group ref={group} scale={small ? 0.75 : 1}>
+    <group ref={group} position={[0, 1.05, 0]} scale={small ? 0.5 : 0.62}>
       <RoundedBox args={[0.55, 3.2, 0.55]} radius={0.12} smoothness={6} rotation={[0, 0, Math.PI / 4]}>
         {mat}
       </RoundedBox>

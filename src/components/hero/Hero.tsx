@@ -25,7 +25,7 @@ export function Hero() {
   return (
     <header className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 text-center">
       <div className="absolute inset-0">
-        <StaticX />
+        {mode === "poster" && <StaticX />}
         {mode === "3d" && (
           <div className="absolute inset-0 animate-in fade-in duration-1000">
             <Suspense fallback={null}>

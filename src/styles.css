@@ -171,7 +171,7 @@
 }
 
 @utility hero-poster-x {
-  font-size: min(48vh, 70vw);
+  font-size: min(36vh, 60vw);
   line-height: 1;
   font-weight: 800;
   background: var(--gradient-chrome);
