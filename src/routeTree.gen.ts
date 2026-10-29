@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as EventsIndexRouteImport } from './routes/events.index'
@@ -44,6 +45,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
+  '/register': typeof RegisterRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/events/hackx-1-0': typeof EventsHackx10Route
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
+  '/register': typeof RegisterRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/events/hackx-1-0': typeof EventsHackx10Route
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/partner': typeof PartnerRoute
   '/privacy': typeof PrivacyRoute
+  '/register': typeof RegisterRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/events/hackx-1-0': typeof EventsHackx10Route
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/partner'
     | '/privacy'
+    | '/register'
     | '/sitemap.xml'
     | '/terms'
     | '/events/hackx-1-0'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/partner'
     | '/privacy'
+    | '/register'
     | '/sitemap.xml'
     | '/terms'
     | '/events/hackx-1-0'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/partner'
     | '/privacy'
+    | '/register'
     | '/sitemap.xml'
     | '/terms'
     | '/events/hackx-1-0'
@@ -141,6 +153,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   PartnerRoute: typeof PartnerRoute
   PrivacyRoute: typeof PrivacyRoute
+  RegisterRoute: typeof RegisterRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   EventsHackx10Route: typeof EventsHackx10Route
@@ -184,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -221,6 +241,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   PartnerRoute: PartnerRoute,
   PrivacyRoute: PrivacyRoute,
+  RegisterRoute: RegisterRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   EventsHackx10Route: EventsHackx10Route,
