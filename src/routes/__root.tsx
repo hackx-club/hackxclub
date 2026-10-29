@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SiteNav, SiteFooter, WhatsAppFab } from "@/components/layout/SiteChrome";
+import "@/lib/sitemap";
 
 function NotFoundComponent() {
   return (
@@ -79,6 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "HackX" },
+      { property: "og:site_name", content: "HackX" },
       { name: "theme-color", content: "#0b0b0b" },
     ],
     links: [
@@ -92,6 +95,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
   }),
+  staticData: { sitemap: false },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -118,7 +122,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      <SiteNav />
       <Outlet />
+      <SiteFooter />
+      <WhatsAppFab />
     </QueryClientProvider>
   );
 }

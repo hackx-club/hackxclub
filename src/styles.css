@@ -195,3 +195,8 @@
   background: linear-gradient(180deg, var(--silver-light), var(--silver));
   box-shadow: 0 10px 30px -8px oklch(0 0 0 / 60%);
 }
+
+@utility btn-sm {
+  padding: 0.55rem 1.2rem;
+  font-size: 0.875rem;
+}
