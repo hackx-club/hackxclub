@@ -5,7 +5,7 @@ import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/partner")({
   staticData: { sitemap: true },
-  head: () => pageHead("/partner", "Partner with HackX | Sponsors & Mentors", "Sponsor or mentor at HackX 1.0 and meet motivated student builders."),
+  head: () => pageHead("/partner", "Partner with HackX | Sponsors & Mentors", "Sponsor or mentor at HackX 1.0 and meet motivated student builders.", { crumb: "Partner" }),
   component: PartnerPage,
 });
 

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Hero } from "@/components/hero/Hero";
-import { Card, Section } from "@/components/layout/SiteChrome";
+import { CtaBanner, SectionHeading, SponsorMarquee } from "@/components/layout/SiteChrome";
+import { hackx1, numbers, pillars } from "@/content/site-content";
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
@@ -8,8 +9,8 @@ export const Route = createFileRoute("/")({
   head: () =>
     pageHead(
       "/",
-      "HackX 1.0 | 12-Hour Hackathon on 28 December 2026 | hackx.club",
-      "HackX 1.0 is a 12-hour college hackathon on 28 December 2026. ₹20,000+ prize pool, food included. Register on WhatsApp.",
+      "HackX | Student & Founder Tech Club in India",
+      "HackX is a student and founder tech club in India. We run hackathons and founder meetups. HackX 1.0: 28 Dec 2026, 12 hours.",
     ),
   component: Index,
 });
@@ -18,16 +19,59 @@ function Index() {
   return (
     <main>
       <Hero />
-      <Section>
+
+      <section className="mx-auto max-w-6xl px-6 py-28">
+        <SectionHeading eyebrow="Who we are" title="A club for people who would rather build than talk about it.">
+          HackX is a student and founder tech club in India. We bring builders into one room and give them a reason to ship.
+        </SectionHeading>
+        <Link to="/about" className="text-sm font-medium" data-reveal>Read our story <span className="arrow">→</span></Link>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 py-20">
+        <SectionHeading eyebrow="What we do" title="Three ways we build together." />
         <div className="grid gap-4 md:grid-cols-3">
-          <Card><p className="text-3xl font-bold">12 hrs</p><p className="mt-1 text-muted-foreground">Non-stop building</p></Card>
-          <Card><p className="text-3xl font-bold">₹20,000+</p><p className="mt-1 text-muted-foreground">Prize pool</p></Card>
-          <Card><p className="text-3xl font-bold">Free food</p><p className="mt-1 text-muted-foreground">All day, on us</p></Card>
+          {pillars.map((p, i) => (
+            <div key={p.title} className="card-lift rounded-xl border border-border bg-card p-8" data-reveal style={{ transitionDelay: `${i * 80}ms` }}>
+              <p className="eyebrow">0{i + 1}</p>
+              <h3 className="mt-6 text-2xl font-semibold tracking-tight">{p.title}</h3>
+              <p className="mt-3 text-muted-foreground">{p.body}</p>
+            </div>
+          ))}
         </div>
-        <Link to="/events/hackx-1-0" className="mt-8 inline-block text-sm underline underline-offset-4">
-          See full HackX 1.0 details →
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 py-20">
+        <SectionHeading eyebrow="HackX in numbers" title="Early days. Big plans." />
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+          {numbers.map((n) => (
+            <div key={n.label} data-reveal>
+              <p className="headline-lg" data-count={n.value} data-prefix={n.prefix ?? ""} data-suffix={n.suffix}>
+                {n.prefix ?? ""}{n.value.toLocaleString("en-IN")}{n.suffix}
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">{n.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 py-20">
+        <SectionHeading eyebrow="Upcoming" title="HackX 1.0" />
+        <Link to="/events/hackx-1-0" className="card-lift block rounded-2xl border border-border bg-card p-8 md:p-12" data-reveal>
+          <div className="grid gap-6 md:grid-cols-5">
+            {[["Date", hackx1.date], ["Duration", hackx1.duration], ["Prize pool", hackx1.prize], ["Food", "Included"], ["Venue", hackx1.venue]].map(([k, v]) => (
+              <div key={k}><p className="eyebrow">{k}</p><p className="mt-2 text-lg font-semibold">{v}</p></div>
+            ))}
+          </div>
+          <p className="mt-10 text-sm font-medium">See details <span className="arrow">→</span></p>
         </Link>
-      </Section>
+      </section>
+
+      <section className="py-20">
+        <div className="mx-auto max-w-6xl px-6"><p className="eyebrow mb-6">Sponsors</p></div>
+        <SponsorMarquee />
+      </section>
+
+      <CtaBanner title="Build with us on 28 December." body="12 hours, real products, people who care." />
     </main>
   );
 }
