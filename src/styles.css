@@ -200,3 +200,7 @@
   padding: 0.55rem 1.2rem;
   font-size: 0.875rem;
 }
+
+:root {
+  --logo-blue: oklch(0.6 0.2 262);
+}

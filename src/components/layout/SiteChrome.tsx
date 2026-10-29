@@ -5,14 +5,19 @@ import { whatsappUrl, site } from "@/config/site";
 export function Logo() {
   return (
     <Link to="/" className="flex items-center gap-2.5" aria-label="HackX home">
-      <svg viewBox="0 0 40 24" width="34" height="20" aria-hidden>
-        <line x1="5" y1="12" x2="35" y2="12" stroke="var(--silver-dark)" strokeWidth="2" />
-        <circle cx="5" cy="12" r="4" fill="var(--foreground)" />
-        <circle cx="20" cy="12" r="5" fill="var(--silver)" />
-        <circle cx="35" cy="12" r="4" fill="var(--foreground)" />
+      <svg viewBox="0 0 28 26" width="26" height="24" aria-hidden>
+        <g stroke="var(--foreground)" strokeWidth="2">
+          <line x1="14" y1="15" x2="14" y2="4" />
+          <line x1="14" y1="15" x2="4" y2="21" />
+          <line x1="14" y1="15" x2="24" y2="21" />
+        </g>
+        <circle cx="14" cy="4" r="3.3" fill="var(--foreground)" />
+        <circle cx="4" cy="21" r="3.3" fill="var(--foreground)" />
+        <circle cx="24" cy="21" r="3.3" fill="var(--foreground)" />
+        <circle cx="14" cy="15" r="5" fill="var(--logo-blue)" />
       </svg>
-      <span className="text-lg font-bold tracking-tight">
-        Hack<span className="text-chrome">X</span>
+      <span className="text-xl font-medium tracking-tight">
+        Hack<span className="font-bold" style={{ color: "var(--logo-blue)" }}>X</span>
       </span>
     </Link>
   );
