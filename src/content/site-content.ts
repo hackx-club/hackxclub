@@ -1,6 +1,11 @@
 // All editable site content lives here. Use [TO BE ANNOUNCED] for unknowns; don't invent facts.
 export const TBA = "[TO BE ANNOUNCED]";
 
+export const registerOptions = [
+  { value: "hackx-1-0", label: "HackX 1.0 · 28 Dec 2026" },
+  { value: "general", label: "No specific event, keep me posted" },
+];
+
 export const tracks = ["Track 1 " + TBA, "Track 2 " + TBA, "Track 3 " + TBA, "Track 4 " + TBA, "Track 5 " + TBA];
 
 export const numbers = [

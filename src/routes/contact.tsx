@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -43,7 +43,8 @@ function ContactPage() {
       <PageHeader eyebrow="Contact" title="Talk to us." intro="WhatsApp is fastest." />
       <Section>
         <div className="grid gap-10 md:grid-cols-2">
-          <div className="grid gap-3">
+          <div className="grid content-start gap-3">
+            <Link to="/register" className="btn-silver justify-center">Register for an event <span className="arrow">→</span></Link>
             {channels.map(([k, v, href]) => (
               <Card key={k}>
                 <p className="eyebrow">{k}</p>
