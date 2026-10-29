@@ -63,7 +63,7 @@ function RegisterPage() {
               <label key={n} className="grid gap-1.5 text-sm">
                 {l}
                 <input name={n} type={t} className={field} maxLength={n === "college" ? 150 : n === "email" ? 255 : 100} />
-                {errors[n] && <span className="text-destructive">{errors[n]}</span>}
+                {n && errors[n] && <span className="text-destructive">{errors[n]}</span>}
               </label>
             ))}
             <label className="grid gap-1.5 text-sm">
@@ -78,7 +78,7 @@ function RegisterPage() {
                 <option value="" disabled>Pick one</option>
                 {tracks.map((t) => <option key={t}>{t}</option>)}
               </select>
-              {errors.track && <span className="text-destructive">{errors.track}</span>}
+              {errors["track"] && <span className="text-destructive">{errors["track"]}</span>}
             </label>
             {status === "error" && <p className="text-sm text-destructive">Couldn't save. Try again or register on WhatsApp.</p>}
             <button type="submit" disabled={status === "saving"} className="btn-silver justify-center">

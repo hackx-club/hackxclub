@@ -72,7 +72,7 @@ function ContactPage() {
               <label className="grid gap-1.5 text-sm">
                 Message
                 <textarea name="message" rows={5} maxLength={1000} className={field} />
-                {errors.message && <span className="text-destructive">{errors.message}</span>}
+                {errors["message"] && <span className="text-destructive">{errors["message"]}</span>}
               </label>
               {status === "error" && <p className="text-sm text-destructive">Couldn't send. Try WhatsApp instead.</p>}
               <button type="submit" disabled={status === "saving"} className="btn-silver justify-center">
