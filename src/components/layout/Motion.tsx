@@ -37,7 +37,7 @@ export function Motion() {
         if (!en.isIntersecting) return;
         const el = en.target as HTMLElement;
         el.classList.add("is-in");
-        if (el.dataset.count) countUp(el);
+        if (el.dataset["count"]) countUp(el);
         io.unobserve(el);
       }),
       { threshold: 0.15 },
@@ -51,9 +51,9 @@ export function Motion() {
 }
 
 function countUp(el: HTMLElement) {
-  const target = Number(el.dataset.count);
+  const target = Number(el.dataset["count"]);
   const start = performance.now();
-  const fmt = (n: number) => `${el.dataset.prefix ?? ""}${Math.round(n).toLocaleString("en-IN")}${el.dataset.suffix ?? ""}`;
+  const fmt = (n: number) => `${el.dataset["prefix"] ?? ""}${Math.round(n).toLocaleString("en-IN")}${el.dataset["suffix"] ?? ""}`;
   const step = (t: number) => {
     const p = Math.min((t - start) / 800, 1);
     el.textContent = fmt(target * (1 - Math.pow(1 - p, 3)));
