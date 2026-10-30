@@ -51,6 +51,21 @@ export const hackx1 = {
 
 export const team = [1, 2, 3, 4].map((i) => ({ name: "Team member " + TBA, role: "Role " + TBA, key: i }));
 
+export const mentors = [
+  {
+    name: "Deekshana Reddy",
+    role: "Mentor · Marketing & Branding",
+    photo: "deekshana",
+    bio: "Founder of Deetox Buddy, a consumer awareness and brand accountability platform backed by Microsoft for Startups. Known for viral, campaign-driven ingredient transparency, she has challenged global giants like Coca-Cola and Unilever. She guides HackX on consumer psychology, storytelling and building engaged audiences.",
+  },
+  {
+    name: "Rodick J",
+    role: "Mentor",
+    photo: "rodick",
+    bio: "CEO of GenC and co-founder of F1 Chennai Community.",
+  },
+] as const;
+
 export const socials = {
   email: TBA,
   instagram: TBA,
