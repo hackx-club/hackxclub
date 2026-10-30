@@ -23,10 +23,11 @@ function AboutPage() {
   return (
     <main>
       <PageHeader eyebrow="About" title="We started HackX because we wanted a room full of builders." />
-      <Section title="Our story">
+      <Section title="Why HackX exists">
         <div className="max-w-2xl space-y-5 text-lg text-muted-foreground" data-reveal>
-          <p>Most of us learned to build alone, late at night, with nobody to show the result to. We kept meeting people doing the same thing and thought: what if we put them all in one place?</p>
-          <p>That's HackX. A club for students and founders in India who want to make real things, together. HackX 1.0 is our first big step. [Founder story details TO BE ANNOUNCED]</p>
+          <p>We're students, and we noticed something: everyone tells us to get ready for the future, but almost nothing is built for us to actually start something.</p>
+          <p>Startup events are made for adults. Hackathons are made for people who already code. Students with a big idea and nowhere to take it get left out.</p>
+          <p>So we stopped waiting for someone else to build it. HackX is a club made by students, for students: a place to meet other builders and founders, and to try your idea in the real world.</p>
         </div>
       </Section>
       <Section title="Mission">
