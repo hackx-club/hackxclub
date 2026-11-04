@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 
-const HeroScene = lazy(() => import("./HeroScene"));
+const HeroParticleX = lazy(() => import("./HeroParticleX"));
 
 function StaticX() {
   return (
@@ -12,26 +12,22 @@ function StaticX() {
 }
 
 export function Hero() {
-  const [mode, setMode] = useState<"poster" | "3d">("poster");
-  const [small, setSmall] = useState(false);
+  const [mode, setMode] = useState<"poster" | "particles">("poster");
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const lowPower = (navigator.hardwareConcurrency ?? 8) <= 2;
-    setSmall(window.innerWidth < 768);
-    if (!reduce && !lowPower) setMode("3d");
+    if (!reduce && !lowPower) setMode("particles");
   }, []);
 
   return (
     <header className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 text-center">
       <div className="absolute inset-0">
         {mode === "poster" && <StaticX />}
-        {mode === "3d" && (
-          <div className="absolute inset-0 animate-in fade-in duration-1000">
-            <Suspense fallback={null}>
-              <HeroScene small={small} />
-            </Suspense>
-          </div>
+        {mode === "particles" && (
+          <Suspense fallback={<StaticX />}>
+            <HeroParticleX />
+          </Suspense>
         )}
       </div>
       <div className="hero-vignette pointer-events-none absolute inset-0" />

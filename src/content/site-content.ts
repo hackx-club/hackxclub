@@ -49,7 +49,12 @@ export const hackx1 = {
   ],
 };
 
-export const team = [1, 2, 3, 4].map((i) => ({ name: "Team member " + TBA, role: "Role " + TBA, key: i }));
+export const team = [
+  { key: 1, name: "Team member " + TBA, role: "Role " + TBA, photo: "member" },
+  { key: 2, name: "Team member " + TBA, role: "Role " + TBA },
+  { key: 3, name: "Team member " + TBA, role: "Role " + TBA },
+  { key: 4, name: "Team member " + TBA, role: "Role " + TBA },
+];
 
 export const mentors = [
   {

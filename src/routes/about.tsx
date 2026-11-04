@@ -3,8 +3,9 @@ import { Card, CtaBanner, PageHeader, Section } from "@/components/layout/SiteCh
 import { mentors, pillars, team } from "@/content/site-content";
 import deekshana from "@/assets/deekshana.jpeg.asset.json";
 import rodick from "@/assets/rodick.jpeg.asset.json";
+import teamMember from "@/assets/team-member.png.asset.json";
 
-const photos = { deekshana: deekshana.url, rodick: rodick.url } as const;
+const photos: Record<string, string> = { deekshana: deekshana.url, rodick: rodick.url, member: teamMember.url };
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/about")({
@@ -59,7 +60,11 @@ function AboutPage() {
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
           {team.map((m) => (
             <Card key={m.key}>
-              <div className="aspect-square rounded-lg bg-muted" />
+              {m.photo ? (
+                <img src={photos[m.photo]} alt={m.name} loading="lazy" className="aspect-square w-full rounded-lg object-cover" />
+              ) : (
+                <div className="aspect-square rounded-lg bg-muted" />
+              )}
               <p className="mt-4 font-medium">{m.name}</p>
               <p className="text-sm text-muted-foreground">{m.role}</p>
             </Card>

@@ -43,9 +43,14 @@ export function Motion() {
           }),
           { threshold: 0.1 },
         );
+    // Track processed elements in a WeakSet instead of a DOM attribute:
+    // a data-seen attribute landing in the DOM before hydration completes
+    // triggers a React hydration mismatch warning.
+    const seen = new WeakSet<HTMLElement>();
     const scan = () => {
-      document.querySelectorAll<HTMLElement>("[data-reveal]:not([data-seen]), [data-count]:not([data-seen])").forEach((el) => {
-        el.dataset["seen"] = "";
+      document.querySelectorAll<HTMLElement>("[data-reveal], [data-count]").forEach((el) => {
+        if (seen.has(el)) return;
+        seen.add(el);
         if (io) io.observe(el);
         else el.classList.add("is-in");
       });
