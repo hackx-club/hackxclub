@@ -152,8 +152,8 @@ export default function HeroParticleX() {
       const scatter = Math.max(width, height) * 0.4;
 
       for (let i = 0; i < n; i++) {
-        const wx = xs[i] - width / 2;
-        const wy = height / 2 - ys[i];
+        const wx = xs[i]! - width / 2;
+        const wy = height / 2 - ys[i]!;
         target[i * 2] = wx;
         target[i * 2 + 1] = wy;
         const a = Math.random() * Math.PI * 2;
@@ -258,27 +258,34 @@ export default function HeroParticleX() {
       for (let i = 0; i < count; i++) {
         const ix = i * 2;
         const iy = ix + 1;
-        const tx = target[ix];
-        const ty = target[iy];
-        const k = STIFF * speed[i];
-        vel[ix] = (vel[ix] + (tx - pos[ix]) * k * dt) * damp;
-        vel[iy] = (vel[iy] + (ty - pos[iy]) * k * dt) * damp;
+        const tx = target[ix]!;
+        const ty = target[iy]!;
+        const x0 = pos[ix]!;
+        const y0 = pos[iy]!;
+        const v0x = vel[ix]!;
+        const v0y = vel[iy]!;
+        const k = STIFF * speed[i]!;
+        let vx = (v0x + (tx - x0) * k * dt) * damp;
+        let vy = (v0y + (ty - y0) * k * dt) * damp;
         if (pointer.active) {
-          const rx = pos[ix] - px;
-          const ry = pos[iy] - py;
+          const rx = x0 - px;
+          const ry = y0 - py;
           const d2 = rx * rx + ry * ry;
           if (d2 < R2 && d2 > 0.01) {
             const d = Math.sqrt(d2);
             const f = ((1 - d / R) * KICK * dt) / d;
-            vel[ix] += rx * f;
-            vel[iy] += ry * f;
+            vx += rx * f;
+            vy += ry * f;
           }
         }
-        pos[ix] += vel[ix] * dt;
-        pos[iy] += vel[iy] * dt;
+        vel[ix] = vx;
+        vel[iy] = vy;
+        pos[ix] = x0 + vx * dt;
+        pos[iy] = y0 + vy * dt;
       }
-      (state.geometry!.attributes.position as THREE.BufferAttribute).needsUpdate = true;
-      state.material.uniforms.uTime.value = t / 1000;
+      const posAttr = state.geometry!.attributes["position"] as THREE.BufferAttribute;
+      posAttr.needsUpdate = true;
+      state.material.uniforms["uTime"]!.value = t / 1000;
       renderer.render(scene, camera);
       if (!ready) {
         ready = true;
@@ -290,8 +297,8 @@ export default function HeroParticleX() {
     const onVisibility = () => {
       visible = document.visibilityState === "visible";
     };
-    const io = new IntersectionObserver(([entry]) => {
-      onScreen = entry.isIntersecting;
+    const io = new IntersectionObserver((entries) => {
+      onScreen = entries[0]?.isIntersecting ?? onScreen;
     });
     io.observe(host);
 
