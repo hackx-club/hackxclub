@@ -16,7 +16,7 @@ function StaticX() {
 }
 
 function sampleGlyph(width: number, height: number, cap: number) {
-  const F = Math.min(height * 0.36, width * 0.55);
+  const F = Math.min(height * 0.32, width * 0.5);
   const off = document.createElement("canvas");
   off.width = width;
   off.height = height;
@@ -26,7 +26,7 @@ function sampleGlyph(width: number, height: number, cap: number) {
   ctx.font = `700 ${F}px "Inter Tight", system-ui, sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("X", width / 2, height * 0.3);
+  ctx.fillText("X", width / 2, height * 0.27);
 
   const img = ctx.getImageData(0, 0, width, height).data;
   const coverage = 0.3;
@@ -345,7 +345,7 @@ export default function HeroParticleX() {
     <div ref={hostRef} role="img" aria-label="X" className="absolute inset-0">
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-[30%] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        className="pointer-events-none absolute left-1/2 top-[27%] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
           width: "min(60vh, 90vw)",
           aspectRatio: "1",
