@@ -5,7 +5,7 @@ import deekshana from "@/assets/deekshana.jpeg.asset.json";
 import rodick from "@/assets/rodick.jpeg.asset.json";
 import teamMember from "@/assets/team-member.png.asset.json";
 
-const photos = { deekshana: deekshana.url, rodick: rodick.url, member: teamMember.url } as const;
+const photos: Record<string, string> = { deekshana: deekshana.url, rodick: rodick.url, member: teamMember.url };
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/about")({

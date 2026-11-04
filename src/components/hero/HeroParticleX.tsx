@@ -46,8 +46,8 @@ function sampleGlyph(width: number, height: number, cap: number) {
   let count = xs.length;
   while (count > cap) {
     const drop = Math.floor(Math.random() * count);
-    xs[drop] = xs[count - 1];
-    ys[drop] = ys[count - 1];
+    xs[drop] = xs[count - 1]!;
+    ys[drop] = ys[count - 1]!;
     count--;
   }
   xs.length = count;
@@ -162,7 +162,7 @@ export default function HeroParticleX() {
         pos[i * 2 + 1] = wy + Math.sin(a) * r;
         seeds[i] = Math.random();
         sparkle[i] = Math.random() < 0.04 ? 1 : 0;
-        wave[i] = ((xs[i] - ys[i]) / F + 1) / 2;
+        wave[i] = ((xs[i]! - ys[i]!) / F + 1) / 2;
         speed[i] = 0.7 + Math.random() * 0.6;
       }
 
