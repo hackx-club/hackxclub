@@ -115,6 +115,9 @@ export default function HeroParticleX() {
     renderer.setClearColor(0x000000, 0);
     const canvas = renderer.domElement;
     canvas.style.pointerEvents = "none";
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.display = "block";
     host.appendChild(canvas);
 
     const scene = new THREE.Scene();
@@ -177,6 +180,7 @@ export default function HeroParticleX() {
 
       const geo = new THREE.BufferGeometry();
       geo.setAttribute("position", new THREE.BufferAttribute(pos, 2));
+      geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(), Math.max(width, height));
       geo.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 1));
       geo.setAttribute("aSparkle", new THREE.BufferAttribute(sparkle, 1));
       geo.setAttribute("aWave", new THREE.BufferAttribute(wave, 1));
