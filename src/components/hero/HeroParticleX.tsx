@@ -37,7 +37,7 @@ function sampleGlyph(width: number, height: number, cap: number) {
   const ys: number[] = [];
   for (let y = 0; y < height; y += stride) {
     for (let x = 0; x < width; x += stride) {
-      if (img[(y * width + x) * 4 + 3] > 128) {
+      if (img[(y * width + x) * 4 + 3]! > 128) {
         xs.push(x + (Math.random() - 0.5) * jitter);
         ys.push(y + (Math.random() - 0.5) * jitter);
       }
