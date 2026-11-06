@@ -12,4 +12,9 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    // Pre-declare the hero's three.js addon so Vite never re-optimizes it mid-session;
+    // a mid-session re-optimize tears down the running React instance and blanks the page.
+    optimizeDeps: { include: ["three", "three/addons/geometries/RoundedBoxGeometry.js"] },
+  },
 });
