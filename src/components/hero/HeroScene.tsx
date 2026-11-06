@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { DottedX } from "./DottedX";
 
 const SPIN = 0.18;
 const TILT = 0.35;
@@ -60,39 +61,28 @@ export default function HeroScene() {
     const environment = pmrem.fromScene(studio, 0.05);
     scene.environment = environment.texture;
     pmrem.dispose();
-    // Connected dots: chrome nodes on a loose sphere, joined to their nearest neighbours.
-    const geometry = new THREE.SphereGeometry(0.16, 32, 24);
+    // Fixed dot positions form a volumetric X; only the whole group moves.
+    const geometry = new THREE.SphereGeometry(0.044, 12, 8);
     const material = new THREE.MeshPhysicalMaterial({ color: silver, metalness: 1, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.08 });
-    const linkGeometry = new THREE.CylinderGeometry(0.025, 0.025, 1, 10);
     const group = new THREE.Group();
     const nodes: THREE.Vector3[] = [];
-    const COUNT = 16;
-    for (let i = 0; i < COUNT; i++) {
-      const y = 1 - (i / (COUNT - 1)) * 2;
-      const r = Math.sqrt(1 - y * y);
-      const t = i * 2.399963;
-      nodes.push(new THREE.Vector3(Math.cos(t) * r, y, Math.sin(t) * r).multiplyScalar(1.5 + (i % 3) * 0.12));
+    for (let layer = -1; layer <= 1; layer++) {
+      for (let row = -10; row <= 10; row++) {
+        for (let col = -10; col <= 10; col++) {
+          if (Math.min(Math.abs(col - row), Math.abs(col + row)) <= 2) {
+            nodes.push(new THREE.Vector3(col * 0.135, row * 0.135, layer * 0.12));
+          }
+        }
+      }
     }
-    nodes.forEach((p, i) => {
-      const dot = new THREE.Mesh(geometry, material);
-      dot.position.copy(p);
-      dot.scale.setScalar(i % 4 === 0 ? 1.5 : 1);
-      group.add(dot);
+    const dots = new THREE.InstancedMesh(geometry, material, nodes.length);
+    const matrix = new THREE.Matrix4();
+    nodes.forEach((point, index) => {
+      matrix.makeTranslation(point.x, point.y, point.z);
+      dots.setMatrixAt(index, matrix);
     });
-    const done = new Set<string>();
-    const up = new THREE.Vector3(0, 1, 0);
-    nodes.forEach((a, i) => {
-      nodes.map((b, j) => ({ j, d: a.distanceTo(b) })).filter((o) => o.j !== i).sort((x, y) => x.d - y.d).slice(0, 3).forEach(({ j, d }) => {
-        const key = i < j ? `${i}-${j}` : `${j}-${i}`;
-        if (done.has(key)) return;
-        done.add(key);
-        const link = new THREE.Mesh(linkGeometry, material);
-        link.position.copy(a).add(nodes[j]!).multiplyScalar(0.5);
-        link.scale.y = d;
-        link.quaternion.setFromUnitVectors(up, nodes[j]!.clone().sub(a).normalize());
-        group.add(link);
-      });
-    });
+    dots.instanceMatrix.needsUpdate = true;
+    group.add(dots);
     scene.add(group);
     scene.add(new THREE.AmbientLight(lightColor, 0.2));
     const mouseLight = new THREE.PointLight(lightColor, 30, 12);
@@ -113,10 +103,9 @@ export default function HeroScene() {
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      // Preserve the current page copy; restore only the original solid X artwork.
-      const scale = Math.min(height * 0.2, width * 0.32) / (height * 0.64);
+      const scale = Math.min(height * 0.24, width * 0.42) / (height * 0.64);
       group.scale.setScalar(scale);
-      group.position.y = 0.95;
+      group.position.y = 1.05;
     };
     const onMove = (event: PointerEvent) => {
       const rect = host.getBoundingClientRect();
@@ -132,7 +121,8 @@ export default function HeroScene() {
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
       if (!visible || !onScreen) return;
-      group.rotation.y += SPIN * dt;
+      // A bounded shared sway keeps the X legible instead of turning edge-on.
+      group.rotation.y = Math.sin(now / 1000 * SPIN) * 0.42 + pointer.x * 0.12;
       group.rotation.x += (pointer.y * TILT - group.rotation.x) * (1 - Math.exp(-3 * dt));
       mouseLight.position.set(pointer.x * 4, pointer.y * 3, 3);
       renderer.render(scene, camera);
@@ -158,7 +148,7 @@ export default function HeroScene() {
       canvas.removeEventListener("webglcontextlost", contextLost);
       environment.dispose();
       geometry.dispose();
-      linkGeometry.dispose();
+      dots.dispose();
       material.dispose();
       lightGeometry.dispose();
       lightMaterials.forEach((item) => item.dispose());
@@ -166,6 +156,6 @@ export default function HeroScene() {
       canvas.remove();
     };
   }, []);
-  if (fallback) return <div aria-hidden className="hero-poster"><span className="hero-poster-x">X</span></div>;
-  return <div ref={hostRef} role="img" aria-label="Spinning network of connected chrome dots" className="pointer-events-none absolute inset-0" />;
+  if (fallback) return <DottedX />;
+  return <div ref={hostRef} role="img" aria-label="Metallic dotted X moving together as one shape" className="pointer-events-none absolute inset-0" />;
 }
