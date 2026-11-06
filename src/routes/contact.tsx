@@ -3,7 +3,7 @@ import { useState, type FormEvent } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, PageHeader, Section } from "@/components/layout/SiteChrome";
-import { whatsappUrl } from "@/config/site";
+import { whatsappUrl, PHONE_DISPLAY } from "@/config/site";
 import { socials } from "@/content/site-content";
 import { pageHead } from "@/lib/seo";
 
@@ -33,7 +33,8 @@ function ContactPage() {
     setStatus(error ? "error" : "done");
   };
   const channels = [
-    ["WhatsApp", "Message us", whatsappUrl("Hi HackX")],
+    ["WhatsApp", PHONE_DISPLAY, whatsappUrl("Hi HackX")],
+    ["Phone", PHONE_DISPLAY, "tel:+919715803110"],
     ["Email", socials.email, null],
     ["Instagram", socials.instagram, null],
     ["LinkedIn", socials.linkedin, null],
