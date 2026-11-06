@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Replaced the home sphere with a metallic dotted X moving as one shape; site logo unchanged; desktop/mobile rendering and motion checked
 - [x] Separate pages, shared menu/footer/WhatsApp button, sitemap
 - [x] Uploaded HackX logo in menu, footer, browser tab
 - [x] New brief step 1: club positioning, Home, About, Register (saves), Contact (saves), mobile bottom bar, scroll effects, Event/FAQ/Breadcrumb/Organization data, community page removed

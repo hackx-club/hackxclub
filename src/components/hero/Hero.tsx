@@ -1,14 +1,11 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { DottedX } from "./DottedX";
 
 const HeroScene = lazy(() => import("./HeroScene"));
 
 function StaticX() {
-  return (
-    <div aria-hidden className="hero-poster">
-      <span className="hero-poster-x">X</span>
-    </div>
-  );
+  return <DottedX />;
 }
 
 export function Hero() {
