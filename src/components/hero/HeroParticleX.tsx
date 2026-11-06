@@ -108,11 +108,11 @@ void main() {
   vec3 n = normalize(vNormal + grain);
   vec3 light = normalize(uLight);
   vec3 halfVector = normalize(light + vView);
-  float spec = pow(max(dot(n, halfVector), 0.0), 42.0);
+  float spec = pow(max(dot(n, halfVector), 0.0), 80.0);
   float rim = pow(1.0 - abs(dot(n, vView)), 2.2);
-  float strip = pow(max(0.0, 1.0 - abs(dot(reflect(-vView, n), normalize(vec3(-0.6, 0.8, 0.4))))), 14.0);
+  float strip = pow(max(0.0, dot(reflect(-vView, n), normalize(vec3(-0.6, 0.8, 0.4)))), 22.0);
   float diffuse = max(dot(n, light), 0.0);
-  vec3 col = uMetal * (0.65 + diffuse * 0.6) + uSilver * (spec * 1.1 + rim * 0.55 + strip * 0.75 + 0.035);
+  vec3 col = uMetal * (0.65 + diffuse * 0.45) + uSilver * (spec * 1.1 + rim * 0.55 + strip * 0.85 + 0.018);
   col *= 0.8 + vSeed * 0.35;
   gl_FragColor = vec4(col, smoothstep(1.0, 0.72, d));
   #include <tonemapping_fragment>
