@@ -1,9 +1,9 @@
 export function DottedX() {
   const dots = [];
-  for (let row = -10; row <= 10; row++) {
-    for (let col = -10; col <= 10; col++) {
-      if (Math.min(Math.abs(col - row), Math.abs(col + row)) <= 2) {
-        dots.push(<circle key={`${row}-${col}`} cx={col * 10 + 110} cy={row * 10 + 110} r="3.3" />);
+  for (let row = -30; row <= 30; row++) {
+    for (let col = -30; col <= 30; col++) {
+      if (Math.min(Math.abs(col - row), Math.abs(col + row)) <= 6) {
+        dots.push(<circle key={`${row}-${col}`} cx={col * (10 / 3) + 110} cy={row * (10 / 3) + 110} r="0.96" />);
       }
     }
   }
