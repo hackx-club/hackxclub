@@ -92,7 +92,7 @@ export default function HeroScene() {
       // Preserve the current page copy; restore only the original solid X artwork.
       const scale = Math.min(height * 0.30, width * 0.44) / (height * 0.64);
       group.scale.setScalar(scale);
-      group.position.y = 1.0;
+      group.position.y = 1.45;
     };
     const onMove = (event: PointerEvent) => {
       const rect = host.getBoundingClientRect();
