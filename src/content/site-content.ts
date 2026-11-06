@@ -50,7 +50,7 @@ export const hackx1 = {
 };
 
 export const team = [
-  { key: 1, name: "Name " + TBA, role: "Founder", photo: "member" },
+  { key: 1, name: "Dharun", role: "Founder", photo: "member" },
   { key: 2, name: "Santhosh", role: "Co-founder", photo: "santhosh" },
   { key: 3, name: "Team member " + TBA, role: "Role " + TBA },
   { key: 4, name: "Team member " + TBA, role: "Role " + TBA },
