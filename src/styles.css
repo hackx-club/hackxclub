@@ -322,3 +322,11 @@ main { animation: page-in 0.6s cubic-bezier(.22,1,.36,1); }
 @media (max-width: 767px) {
   body { padding-bottom: 4.5rem; }
 }
+
+/* Page-change transition + headline line reveal */
+@keyframes page-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes line-up { from { clip-path: inset(0 0 100% 0); transform: translateY(0.4em); } to { clip-path: inset(0 0 -10% 0); transform: none; } }
+.page-enter { animation: page-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.page-enter h1 { animation: line-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
+.btn-silver, .btn-ghost { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s, color 0.2s, border-color 0.2s; }
+@media (prefers-reduced-motion: reduce) { .page-enter, .page-enter h1 { animation: none; } }
