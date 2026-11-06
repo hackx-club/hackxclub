@@ -114,9 +114,9 @@ export default function HeroScene() {
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       // Preserve the current page copy; restore only the original solid X artwork.
-      const scale = Math.min(height * 0.22, width * 0.34) / (height * 0.64);
+      const scale = Math.min(height * 0.17, width * 0.3) / (height * 0.64);
       group.scale.setScalar(scale);
-      group.position.y = 1.25;
+      group.position.y = 0.95;
     };
     const onMove = (event: PointerEvent) => {
       const rect = host.getBoundingClientRect();
