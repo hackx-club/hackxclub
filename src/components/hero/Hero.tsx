@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 
-const HeroParticleX = lazy(() => import("./HeroParticleX"));
+const HeroScene = lazy(() => import("./HeroScene"));
 
 function StaticX() {
   return (
@@ -12,21 +12,21 @@ function StaticX() {
 }
 
 export function Hero() {
-  const [mode, setMode] = useState<"poster" | "particles">("poster");
+  const [mode, setMode] = useState<"poster" | "3d">("poster");
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const lowPower = (navigator.hardwareConcurrency ?? 8) <= 2;
-    if (!reduce && !lowPower) setMode("particles");
+    if (!reduce && !lowPower) setMode("3d");
   }, []);
 
   return (
     <header className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 text-center">
       <div className="absolute inset-0">
         {mode === "poster" && <StaticX />}
-        {mode === "particles" && (
+        {mode === "3d" && (
           <Suspense fallback={<StaticX />}>
-            <HeroParticleX />
+            <HeroScene />
           </Suspense>
         )}
       </div>
