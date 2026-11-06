@@ -61,6 +61,26 @@ export function Motion() {
     return () => { mo.disconnect(); io?.disconnect(); };
   }, []);
 
+  // Magnetic buttons: buttons lean gently toward the pointer (mouse only).
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !window.matchMedia("(pointer: fine)").matches) return;
+    let active: HTMLElement | null = null;
+    const onMove = (e: PointerEvent) => {
+      const el = (e.target as HTMLElement).closest<HTMLElement>(".btn-silver, .btn-ghost");
+      if (active && active !== el) { active.style.transform = ""; active = null; }
+      if (!el) return;
+      active = el;
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - r.left - r.width / 2) * 0.25;
+      const y = (e.clientY - r.top - r.height / 2) * 0.35;
+      el.style.transform = `translate(${x}px, ${y}px)`;
+    };
+    const onLeave = () => { if (active) active.style.transform = ""; active = null; };
+    addEventListener("pointermove", onMove, { passive: true });
+    document.addEventListener("pointerleave", onLeave);
+    return () => { removeEventListener("pointermove", onMove); document.removeEventListener("pointerleave", onLeave); };
+  }, []);
+
   return <div id="scroll-progress" className="scroll-progress" aria-hidden />;
 }
 
