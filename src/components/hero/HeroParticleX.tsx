@@ -1,358 +1,260 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
-const BLUE = new THREE.Color("#2F6BFF");
-const WHITE = new THREE.Color("#F5F5F7");
-
-const DESKTOP_CAP = 6000;
-const MOBILE_CAP = 3000;
+const DESKTOP_CAP = 14000;
+const MOBILE_CAP = 7000;
+const TILT_RESPONSE = 5;
+const POINTER_TILT = 0.42;
 
 function StaticX() {
-  return (
-    <div aria-hidden className="hero-poster">
-      <span className="hero-poster-x">X</span>
-    </div>
-  );
+  return <div aria-hidden className="hero-poster"><span className="hero-poster-x">X</span></div>;
 }
 
-function sampleGlyph(width: number, height: number, cap: number) {
-  const F = Math.min(height * 0.32, width * 0.5);
-  const off = document.createElement("canvas");
-  off.width = width;
-  off.height = height;
-  const ctx = off.getContext("2d", { willReadFrequently: true });
+// Read the same semantic palette as the static chrome fallback.
+function tokenColor(name: string) {
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = 1;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return new THREE.Color();
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  ctx.fillRect(0, 0, 1, 1);
+  const pixel = ctx.getImageData(0, 0, 1, 1).data;
+  return new THREE.Color().setRGB((pixel[0] ?? 0) / 255, (pixel[1] ?? 0) / 255, (pixel[2] ?? 0) / 255, THREE.SRGBColorSpace);
+}
+
+function sampleGlyph(size: number, cap: number) {
+  const canvas = document.createElement("canvas");
+  const dim = Math.ceil(size * 1.4);
+  canvas.width = canvas.height = dim;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
   if (!ctx) return null;
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `700 ${F}px "Inter Tight", system-ui, sans-serif`;
+  ctx.fillStyle = "white";
+  ctx.font = `800 ${size}px "Inter Tight", system-ui, sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("X", width / 2, height * 0.27);
-
-  const img = ctx.getImageData(0, 0, width, height).data;
-  const coverage = 0.3;
-  const stride = Math.min(6, Math.max(2, Math.ceil(Math.sqrt((coverage * F * F) / cap))));
-  const jitter = stride * 0.6;
-
-  const xs: number[] = [];
-  const ys: number[] = [];
-  for (let y = 0; y < height; y += stride) {
-    for (let x = 0; x < width; x += stride) {
-      if (img[(y * width + x) * 4 + 3]! > 128) {
-        xs.push(x + (Math.random() - 0.5) * jitter);
-        ys.push(y + (Math.random() - 0.5) * jitter);
+  ctx.fillText("X", dim / 2, dim / 2);
+  const data = ctx.getImageData(0, 0, dim, dim).data;
+  const inside = (x: number, y: number) => x >= 0 && y >= 0 && x < dim && y < dim && (data[(Math.floor(y) * dim + Math.floor(x)) * 4 + 3] ?? 0) > 128;
+  const step = Math.max(1.7, size / (cap === MOBILE_CAP ? 105 : 150));
+  const depth = size * 0.14;
+  const bevel = size * 0.035;
+  const positions: number[] = [];
+  const normals: number[] = [];
+  const seeds: number[] = [];
+  function add(x: number, y: number, z: number, nx: number, ny: number, nz: number) {
+    if (seeds.length >= cap) return;
+    positions.push(x - dim / 2, dim / 2 - y, z);
+    const n = new THREE.Vector3(nx, ny, nz).normalize();
+    normals.push(n.x, n.y, n.z);
+    seeds.push(Math.random());
+  }
+  for (let y = 0; y < dim; y += step) {
+    for (let x = 0; x < dim; x += step) {
+      if (!inside(x, y)) continue;
+      const nx = Number(inside(x - bevel, y)) - Number(inside(x + bevel, y));
+      const ny = Number(inside(x, y + bevel)) - Number(inside(x, y - bevel));
+      const edge = nx !== 0 || ny !== 0;
+      const jitterX = x + (Math.random() - 0.5) * step * 0.55;
+      const jitterY = y + (Math.random() - 0.5) * step * 0.55;
+      add(jitterX, jitterY, depth / 2 - (edge ? bevel * 0.35 : 0), nx * 0.8, ny * 0.8, 1);
+      add(jitterX, jitterY, -depth / 2, nx * 0.5, ny * 0.5, -1);
+      if (edge && (!inside(x + step, y) || !inside(x - step, y) || !inside(x, y + step) || !inside(x, y - step))) {
+        for (let z = -depth / 2; z < depth / 2; z += step) add(jitterX, jitterY, z, nx, ny, 0);
       }
     }
   }
-  let count = xs.length;
-  while (count > cap) {
-    const drop = Math.floor(Math.random() * count);
-    xs[drop] = xs[count - 1]!;
-    ys[drop] = ys[count - 1]!;
-    count--;
-  }
-  xs.length = count;
-  ys.length = count;
-  return { xs, ys, F, stride };
+  return { positions, normals, seeds, step };
 }
 
 const VERT = /* glsl */ `
 attribute float aSeed;
-attribute float aSparkle;
-attribute float aWave;
 uniform float uTime;
 uniform float uSize;
-uniform float uDrift;
-varying float vSparkle;
-varying float vGlow;
+uniform float uRadius;
+uniform vec2 uPointer;
+uniform float uActive;
+varying vec3 vNormal;
+varying vec3 vView;
+varying vec3 vPosition;
+varying float vSeed;
 void main() {
   vec3 p = position;
-  p.x += sin(uTime * 0.7 + aSeed * 6.2831) * uDrift;
-  p.y += cos(uTime * 0.6 + aSeed * 4.7124) * uDrift;
-  float wave = pow(max(sin(uTime * 1.1 - aWave * 5.0), 0.0), 6.0);
-  vGlow = 1.0 + wave * 1.1;
-  vSparkle = aSparkle;
-  gl_PointSize = uSize * (aSparkle > 0.5 ? 1.7 : 1.0) * (1.0 + wave * 0.35);
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+  float distanceToPointer = length(p.xy - uPointer);
+  float influence = (1.0 - smoothstep(0.0, uRadius, distanceToPointer)) * uActive;
+  p.z += influence * sin(aSeed * 30.0 + uTime * 2.0) * uRadius * 0.045;
+  vec4 mv = modelViewMatrix * vec4(p, 1.0);
+  vNormal = normalize(normalMatrix * normal);
+  vView = normalize(-mv.xyz);
+  vPosition = mv.xyz;
+  vSeed = aSeed;
+  gl_PointSize = uSize * (0.85 + aSeed * 0.3) * clamp(1000.0 / -mv.z, 0.65, 2.0);
+  gl_Position = projectionMatrix * mv;
 }
 `;
-
 const FRAG = /* glsl */ `
-precision mediump float;
-varying float vSparkle;
-varying float vGlow;
+uniform vec3 uMetal;
+uniform vec3 uSilver;
+uniform vec3 uLight;
+varying vec3 vNormal;
+varying vec3 vView;
+varying vec3 vPosition;
+varying float vSeed;
 void main() {
-  vec2 uv = gl_PointCoord - 0.5;
-  float d = length(uv);
-  float alpha = smoothstep(0.5, 0.12, d);
-  vec3 col = mix(vec3(${BLUE.r.toFixed(3)}, ${BLUE.g.toFixed(3)}, ${BLUE.b.toFixed(3)}),
-                 vec3(${WHITE.r.toFixed(3)}, ${WHITE.g.toFixed(3)}, ${WHITE.b.toFixed(3)}), vSparkle);
-  gl_FragColor = vec4(col * vGlow, alpha * 0.9);
+  vec2 uv = gl_PointCoord * 2.0 - 1.0;
+  float d = dot(uv, uv);
+  if (d > 1.0) discard;
+  // Each particle is a tiny metallic grain on the extruded letter surface.
+  vec3 grain = vec3(uv * 0.28, sqrt(max(0.0, 1.0 - d)) * 0.22);
+  vec3 n = normalize(vNormal + grain);
+  vec3 light = normalize(uLight);
+  vec3 halfVector = normalize(light + vView);
+  float spec = pow(max(dot(n, halfVector), 0.0), 80.0);
+  float rim = pow(1.0 - abs(dot(n, vView)), 2.2);
+  float strip = pow(max(0.0, dot(reflect(-vView, n), normalize(vec3(-0.6, 0.8, 0.4)))), 22.0);
+  float diffuse = max(dot(n, light), 0.0);
+  vec3 col = uMetal * (0.65 + diffuse * 0.45) + uSilver * (spec * 1.1 + rim * 0.55 + strip * 0.85 + 0.018);
+  col *= 0.8 + vSeed * 0.35;
+  gl_FragColor = vec4(col, smoothstep(1.0, 0.72, d));
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
 }
 `;
 
 export default function HeroParticleX() {
   const hostRef = useRef<HTMLDivElement>(null);
   const [fallback, setFallback] = useState(false);
-
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const probe = document.createElement("canvas");
-    const hasWebGL = !!(probe.getContext("webgl") || probe.getContext("experimental-webgl"));
-    if (reduce || !hasWebGL || !hostRef.current) {
+    const host = hostRef.current;
+    if (!host || window.matchMedia("(prefers-reduced-motion: reduce)").matches || (navigator.hardwareConcurrency ?? 8) <= 2) {
       setFallback(true);
       return;
     }
-
-    const host = hostRef.current;
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "low-power" });
     } catch {
       setFallback(true);
       return;
     }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x000000, 0);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+    renderer.setClearAlpha(0);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     const canvas = renderer.domElement;
-    canvas.style.pointerEvents = "none";
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
-    canvas.style.display = "block";
+    canvas.className = "hero-particle-canvas";
     host.appendChild(canvas);
-
     const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
-
-    const state = {
-      pos: new Float32Array(0),
-      vel: new Float32Array(0),
-      target: new Float32Array(0),
-      speed: new Float32Array(0),
-      count: 0,
-      F: 0,
-      width: 0,
-      height: 0,
-      geometry: null as THREE.BufferGeometry | null,
-      material: null as THREE.ShaderMaterial | null,
-      points: null as THREE.Points | null,
-    };
-
-    const pointer = { x: 0, y: 0, active: false };
-
-    function build(width: number, height: number) {
-      const sampled = sampleGlyph(width, height, window.innerWidth < 768 ? MOBILE_CAP : DESKTOP_CAP);
-      if (!sampled) return;
-      const { xs, ys, F, stride } = sampled;
-      const n = xs.length;
-
-      const pos = new Float32Array(n * 2);
-      const target = new Float32Array(n * 2);
-      const vel = new Float32Array(n * 2);
-      const seeds = new Float32Array(n);
-      const sparkle = new Float32Array(n);
-      const wave = new Float32Array(n);
-      const speed = new Float32Array(n);
-      const scatter = Math.max(width, height) * 0.4;
-
-      for (let i = 0; i < n; i++) {
-        const wx = xs[i]! - width / 2;
-        const wy = height / 2 - ys[i]!;
-        target[i * 2] = wx;
-        target[i * 2 + 1] = wy;
-        const a = Math.random() * Math.PI * 2;
-        const r = scatter * (0.4 + Math.random() * 0.8);
-        pos[i * 2] = wx + Math.cos(a) * r;
-        pos[i * 2 + 1] = wy + Math.sin(a) * r;
-        seeds[i] = Math.random();
-        sparkle[i] = Math.random() < 0.04 ? 1 : 0;
-        wave[i] = ((xs[i]! - ys[i]!) / F + 1) / 2;
-        speed[i] = 0.7 + Math.random() * 0.6;
-      }
-
-      state.pos = pos;
-      state.vel = vel;
-      state.target = target;
-      state.speed = speed;
-      state.count = n;
-      state.F = F;
-      state.width = width;
-      state.height = height;
-
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute("position", new THREE.BufferAttribute(pos, 2));
-      geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(), Math.max(width, height));
-      geo.setAttribute("aSeed", new THREE.BufferAttribute(seeds, 1));
-      geo.setAttribute("aSparkle", new THREE.BufferAttribute(sparkle, 1));
-      geo.setAttribute("aWave", new THREE.BufferAttribute(wave, 1));
-
-      if (state.material) state.material.dispose();
-      if (state.geometry) state.geometry.dispose();
-      if (state.points) scene.remove(state.points);
-
-      const mat = new THREE.ShaderMaterial({
-        vertexShader: VERT,
-        fragmentShader: FRAG,
-        transparent: true,
-        depthTest: false,
-        depthWrite: false,
-        uniforms: {
-          uTime: { value: 0 },
-          uSize: { value: Math.max(1.8, stride * 0.95) * renderer.getPixelRatio() },
-          uDrift: { value: Math.max(1.2, F * 0.006) },
-        },
-      });
-      const points = new THREE.Points(geo, mat);
-      points.frustumCulled = false;
-      scene.add(points);
-      state.geometry = geo;
-      state.material = mat;
-      state.points = points;
-    }
-
-    function resize() {
-      const rect = host.getBoundingClientRect();
-      const width = Math.max(1, Math.round(rect.width));
-      const height = Math.max(1, Math.round(rect.height));
-      renderer.setSize(width, height, false);
-      camera.left = -width / 2;
-      camera.right = width / 2;
-      camera.top = height / 2;
-      camera.bottom = -height / 2;
-      camera.updateProjectionMatrix();
-      build(width, height);
-    }
-
-    let resizeTimer = 0;
-    const onResize = () => {
-      window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(resize, 200);
-    };
-
-    const setPointerFromEvent = (e: PointerEvent) => {
-      const rect = host.getBoundingClientRect();
-      pointer.x = e.clientX - rect.left - rect.width / 2;
-      pointer.y = rect.height / 2 - (e.clientY - rect.top);
-      pointer.active = true;
-    };
-    const onPointerMove = (e: PointerEvent) => setPointerFromEvent(e);
-    const onPointerLeave = () => {
-      pointer.active = false;
-    };
-
+    const camera = new THREE.PerspectiveCamera(35, 1, 1, 10000);
+    const group = new THREE.Group();
+    scene.add(group);
+    const material = new THREE.ShaderMaterial({
+      vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: true,
+      uniforms: {
+        uTime: { value: 0 }, uSize: { value: 3 }, uRadius: { value: 80 },
+        uPointer: { value: new THREE.Vector2() }, uActive: { value: 0 },
+        uMetal: { value: tokenColor("--hero-metal") }, uSilver: { value: tokenColor("--silver-light") },
+        uLight: { value: new THREE.Vector3(-0.6, 0.8, 1) },
+      },
+    });
+    let geometry: THREE.BufferGeometry | undefined;
+    let points: THREE.Points | undefined;
+    let width = 1;
+    let height = 1;
+    let cancelled = false;
+    let ready = false;
     let raf = 0;
+    let resizeTimer = 0;
+    let last = performance.now();
+    let elapsed = 0;
     let visible = true;
     let onScreen = true;
-    let ready = false;
-
-    const STIFF = 34;
-    const DAMPING = 4.2;
-    const KICK = 1400;
-
-    function tick(t: number) {
-      raf = requestAnimationFrame(tick);
-      if (!visible || !onScreen || !state.material) return;
-      const dt = Math.min((t - last) / 1000 || 0.016, 0.05);
-      last = t;
-      const { pos, vel, target, speed, count } = state;
-      const R = Math.max(60, state.F * 0.28);
-      const R2 = R * R;
-      const damp = Math.exp(-DAMPING * dt);
-      const px = pointer.active ? pointer.x : -1e9;
-      const py = pointer.active ? pointer.y : -1e9;
-      for (let i = 0; i < count; i++) {
-        const ix = i * 2;
-        const iy = ix + 1;
-        const tx = target[ix]!;
-        const ty = target[iy]!;
-        const x0 = pos[ix]!;
-        const y0 = pos[iy]!;
-        const v0x = vel[ix]!;
-        const v0y = vel[iy]!;
-        const k = STIFF * speed[i]!;
-        let vx = (v0x + (tx - x0) * k * dt) * damp;
-        let vy = (v0y + (ty - y0) * k * dt) * damp;
-        if (pointer.active) {
-          const rx = x0 - px;
-          const ry = y0 - py;
-          const d2 = rx * rx + ry * ry;
-          if (d2 < R2 && d2 > 0.01) {
-            const d = Math.sqrt(d2);
-            const f = ((1 - d / R) * KICK * dt) / d;
-            vx += rx * f;
-            vy += ry * f;
-          }
-        }
-        vel[ix] = vx;
-        vel[iy] = vy;
-        pos[ix] = x0 + vx * dt;
-        pos[iy] = y0 + vy * dt;
-      }
-      const posAttr = state.geometry!.attributes["position"] as THREE.BufferAttribute;
-      posAttr.needsUpdate = true;
-      state.material.uniforms["uTime"]!.value = t / 1000;
-      renderer.render(scene, camera);
-      if (!ready) {
-        ready = true;
-        host.setAttribute("data-scene-ready", "true");
-      }
-    }
-    let last = 0;
-
-    const onVisibility = () => {
-      visible = document.visibilityState === "visible";
+    const pointer = { x: 0, y: 0, active: false };
+    const resize = () => {
+      const rect = host.getBoundingClientRect();
+      width = Math.max(1, rect.width);
+      height = Math.max(1, rect.height);
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.position.z = height / (2 * Math.tan(THREE.MathUtils.degToRad(17.5)));
+      camera.updateProjectionMatrix();
+      const size = Math.min(height * 0.4, width * 0.62);
+      const sampled = sampleGlyph(size, width < 768 ? MOBILE_CAP : DESKTOP_CAP);
+      if (!sampled) { setFallback(true); return; }
+      if (points) group.remove(points);
+      geometry?.dispose();
+      geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.Float32BufferAttribute(sampled.positions, 3));
+      geometry.setAttribute("normal", new THREE.Float32BufferAttribute(sampled.normals, 3));
+      geometry.setAttribute("aSeed", new THREE.Float32BufferAttribute(sampled.seeds, 1));
+      geometry.computeBoundingSphere();
+      points = new THREE.Points(geometry, material);
+      group.add(points);
+      group.position.y = height * 0.23;
+      const sizeUniform = material.uniforms["uSize"];
+      if (sizeUniform) sizeUniform.value = sampled.step * 1.1 * renderer.getPixelRatio() * camera.position.z / 1000;
+      const radiusUniform = material.uniforms["uRadius"];
+      if (radiusUniform) radiusUniform.value = size * 0.35;
     };
-    const io = new IntersectionObserver((entries) => {
-      onScreen = entries[0]?.isIntersecting ?? onScreen;
+    const onResize = () => { window.clearTimeout(resizeTimer); resizeTimer = window.setTimeout(resize, 150); };
+    const onMove = (event: PointerEvent) => {
+      const rect = host.getBoundingClientRect();
+      pointer.x = (event.clientX - rect.left) / width * 2 - 1;
+      pointer.y = (event.clientY - rect.top) / height * 2 - 1;
+      pointer.active = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+    };
+    const onLeave = () => { pointer.active = false; };
+    const onVisibility = () => { visible = document.visibilityState === "visible"; };
+    const observer = new IntersectionObserver(([entry]) => { onScreen = entry?.isIntersecting ?? true; });
+    observer.observe(host);
+    const tick = (now: number) => {
+      raf = requestAnimationFrame(tick);
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      if (!visible || !onScreen) return;
+      elapsed += dt;
+      const blend = 1 - Math.exp(-TILT_RESPONSE * dt);
+      const targetY = -0.3 + (pointer.active ? pointer.x * POINTER_TILT : Math.sin(elapsed * 0.35) * 0.1);
+      const targetX = 0.12 + (pointer.active ? pointer.y * 0.22 : Math.cos(elapsed * 0.3) * 0.045);
+      group.rotation.y += (targetY - group.rotation.y) * blend;
+      group.rotation.x += (targetX - group.rotation.x) * blend;
+      const timeUniform = material.uniforms["uTime"];
+      if (timeUniform) timeUniform.value = elapsed;
+      const activeUniform = material.uniforms["uActive"];
+      if (activeUniform) activeUniform.value += ((pointer.active ? 1 : 0) - activeUniform.value) * blend;
+      material.uniforms["uPointer"]?.value.set(pointer.x * width / 2, -pointer.y * height / 2 - group.position.y);
+      material.uniforms["uLight"]?.value.set(-0.6 + pointer.x * 0.8, 0.8 - pointer.y * 0.5, 1);
+      renderer.render(scene, camera);
+      if (!ready && points) { ready = true; host.setAttribute("data-scene-ready", "true"); }
+    };
+    group.rotation.set(0.12, -0.3, -0.035);
+    document.fonts.load('800 100px "Inter Tight"').catch(() => undefined).then(() => {
+      if (cancelled) return;
+      resize();
+      window.addEventListener("resize", onResize);
+      window.addEventListener("pointermove", onMove, { passive: true });
+      window.addEventListener("pointerdown", onMove, { passive: true });
+      document.documentElement.addEventListener("pointerleave", onLeave);
+      document.addEventListener("visibilitychange", onVisibility);
+      raf = requestAnimationFrame(tick);
     });
-    io.observe(host);
-
-    let cancelled = false;
-    document.fonts
-      .load('700 100px "Inter Tight"')
-      .catch(() => undefined)
-      .then(() => {
-        if (cancelled) return;
-        resize();
-        window.addEventListener("resize", onResize);
-        window.addEventListener("pointermove", onPointerMove, { passive: true });
-        window.addEventListener("pointerdown", onPointerMove, { passive: true });
-        window.addEventListener("pointerleave", onPointerLeave, { passive: true });
-        document.addEventListener("visibilitychange", onVisibility);
-        last = performance.now();
-        raf = requestAnimationFrame(tick);
-      });
-
+    const onContextLost = (event: Event) => { event.preventDefault(); setFallback(true); };
+    canvas.addEventListener("webglcontextlost", onContextLost);
     return () => {
       cancelled = true;
       cancelAnimationFrame(raf);
       window.clearTimeout(resizeTimer);
       window.removeEventListener("resize", onResize);
-      window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerdown", onPointerMove);
-      window.removeEventListener("pointerleave", onPointerLeave);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerdown", onMove);
+      document.documentElement.removeEventListener("pointerleave", onLeave);
       document.removeEventListener("visibilitychange", onVisibility);
-      io.disconnect();
-      state.geometry?.dispose();
-      state.material?.dispose();
+      canvas.removeEventListener("webglcontextlost", onContextLost);
+      observer.disconnect();
+      geometry?.dispose();
+      material.dispose();
       renderer.dispose();
       canvas.remove();
     };
   }, []);
-
   if (fallback) return <StaticX />;
-
-  return (
-    <div ref={hostRef} role="img" aria-label="X" className="absolute inset-0">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-[27%] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{
-          width: "min(60vh, 90vw)",
-          aspectRatio: "1",
-          background: "radial-gradient(circle, oklch(0.6 0.2 262 / 12%) 0%, transparent 65%)",
-        }}
-      />
-      <span className="sr-only">X</span>
-    </div>
-  );
+  return <div ref={hostRef} role="img" aria-label="Dark metallic three-dimensional particle X" className="pointer-events-none absolute inset-0" />;
 }
