@@ -6,4 +6,5 @@
 - [x] First team member photo added to About team section (name and role still [TO BE ANNOUNCED] — waiting on user)
 - [ ] Step 2: GSAP line-by-line headline reveals, magnetic buttons, page-change transitions, first-load logo intro, connected-nodes 3D shape (waiting for user go-ahead)
 - [ ] Share image (og-image) — needs user approval to generate
+- [ ] Cofounder photo (cofo.jpeg) + name and role for the About team section — waiting on name/role before adding
 - [ ] Real WhatsApp number, email, Instagram, LinkedIn, team, schedule times — waiting on user
