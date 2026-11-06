@@ -194,14 +194,7 @@
   pointer-events: none;
 }
 
-.hero-dotted-poster {
-  position: absolute;
-  top: 27%;
-  width: min(30vh, 58vw);
-  height: auto;
-  transform: translateY(-50%) perspective(700px) rotateY(-17deg) rotateX(7deg);
-  fill: var(--silver);
-}
+
 
 @utility fab-whatsapp {
   position: fixed;
