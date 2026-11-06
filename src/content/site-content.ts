@@ -65,9 +65,9 @@ export const mentors = [
   },
   {
     name: "Rodick J",
-    role: "Mentor",
+    role: "Mentor · Entrepreneurship & Community",
     photo: "rodick",
-    bio: "CEO of GenC and co-founder of F1 Chennai Community. Rodick brings hands-on experience building companies and growing communities in Chennai, and mentors HackX founders on turning ideas into ventures and bringing people together around them.",
+    bio: "Rodick J. is an entrepreneur and community builder, Co-Founder of GenC and F1 Community Chennai. He brings valuable insights into entrepreneurship, networking, leadership and community development as a mentor to our startup.",
   },
 ] as const;
 
