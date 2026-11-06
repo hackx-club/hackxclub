@@ -62,15 +62,15 @@ export default function HeroScene() {
     scene.environment = environment.texture;
     pmrem.dispose();
     // Fixed dot positions form a volumetric X; only the whole group moves.
-    const geometry = new THREE.SphereGeometry(0.044, 12, 8);
+    const geometry = new THREE.SphereGeometry(0.013, 6, 3);
     const material = new THREE.MeshPhysicalMaterial({ color: silver, metalness: 1, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.08 });
     const group = new THREE.Group();
     const nodes: THREE.Vector3[] = [];
-    for (let layer = -1; layer <= 1; layer++) {
-      for (let row = -10; row <= 10; row++) {
-        for (let col = -10; col <= 10; col++) {
-          if (Math.min(Math.abs(col - row), Math.abs(col + row)) <= 2) {
-            nodes.push(new THREE.Vector3(col * 0.135, row * 0.135, layer * 0.12));
+    for (let layer = -1; layer <= 1; layer += 2) {
+      for (let row = -30; row <= 30; row++) {
+        for (let col = -30; col <= 30; col++) {
+          if (Math.min(Math.abs(col - row), Math.abs(col + row)) <= 6) {
+            nodes.push(new THREE.Vector3(col * 0.045, row * 0.045, layer * 0.12));
           }
         }
       }
