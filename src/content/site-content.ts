@@ -50,7 +50,7 @@ export const hackx1 = {
 };
 
 export const team = [
-  { key: 1, name: "Team member " + TBA, role: "Role " + TBA, photo: "member" },
+  { key: 1, name: "Name " + TBA, role: "Founder", photo: "member" },
   { key: 2, name: "Santhosh", role: "Co-founder", photo: "santhosh" },
   { key: 3, name: "Team member " + TBA, role: "Role " + TBA },
   { key: 4, name: "Team member " + TBA, role: "Role " + TBA },
@@ -67,7 +67,7 @@ export const mentors = [
     name: "Rodick J",
     role: "Mentor",
     photo: "rodick",
-    bio: "CEO of GenC and co-founder of F1 Chennai Community.",
+    bio: "CEO of GenC and co-founder of F1 Chennai Community. Rodick brings hands-on experience building companies and growing communities in Chennai, and mentors HackX founders on turning ideas into ventures and bringing people together around them.",
   },
 ] as const;
 
