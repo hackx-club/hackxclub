@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { DottedX } from "./DottedX";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 
 const SPIN = 0.18;
 const TILT = 0.35;
@@ -61,28 +61,14 @@ export default function HeroScene() {
     const environment = pmrem.fromScene(studio, 0.05);
     scene.environment = environment.texture;
     pmrem.dispose();
-    // Fixed dot positions form a volumetric X; only the whole group moves.
-    const geometry = new THREE.SphereGeometry(0.013, 6, 3);
+    const geometry = new RoundedBoxGeometry(0.55, 3.2, 0.55, 6, 0.12);
     const material = new THREE.MeshPhysicalMaterial({ color: silver, metalness: 1, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.08 });
     const group = new THREE.Group();
-    const nodes: THREE.Vector3[] = [];
-    for (let layer = -1; layer <= 1; layer += 2) {
-      for (let row = -30; row <= 30; row++) {
-        for (let col = -30; col <= 30; col++) {
-          if (Math.min(Math.abs(col - row), Math.abs(col + row)) <= 6) {
-            nodes.push(new THREE.Vector3(col * 0.045, row * 0.045, layer * 0.12));
-          }
-        }
-      }
+    for (const angle of [Math.PI / 4, -Math.PI / 4]) {
+      const bar = new THREE.Mesh(geometry, material);
+      bar.rotation.z = angle;
+      group.add(bar);
     }
-    const dots = new THREE.InstancedMesh(geometry, material, nodes.length);
-    const matrix = new THREE.Matrix4();
-    nodes.forEach((point, index) => {
-      matrix.makeTranslation(point.x, point.y, point.z);
-      dots.setMatrixAt(index, matrix);
-    });
-    dots.instanceMatrix.needsUpdate = true;
-    group.add(dots);
     scene.add(group);
     scene.add(new THREE.AmbientLight(lightColor, 0.2));
     const mouseLight = new THREE.PointLight(lightColor, 30, 12);
@@ -103,9 +89,10 @@ export default function HeroScene() {
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      const scale = Math.min(height * 0.24, width * 0.42) / (height * 0.64);
+      // Preserve the current page copy; restore only the original solid X artwork.
+      const scale = Math.min(height * 0.30, width * 0.44) / (height * 0.64);
       group.scale.setScalar(scale);
-      group.position.y = 1.05;
+      group.position.y = 1.45;
     };
     const onMove = (event: PointerEvent) => {
       const rect = host.getBoundingClientRect();
@@ -121,8 +108,7 @@ export default function HeroScene() {
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
       if (!visible || !onScreen) return;
-      // A bounded shared sway keeps the X legible instead of turning edge-on.
-      group.rotation.y = Math.sin(now / 1000 * SPIN) * 0.42 + pointer.x * 0.12;
+      group.rotation.y += SPIN * dt;
       group.rotation.x += (pointer.y * TILT - group.rotation.x) * (1 - Math.exp(-3 * dt));
       mouseLight.position.set(pointer.x * 4, pointer.y * 3, 3);
       renderer.render(scene, camera);
@@ -148,7 +134,6 @@ export default function HeroScene() {
       canvas.removeEventListener("webglcontextlost", contextLost);
       environment.dispose();
       geometry.dispose();
-      dots.dispose();
       material.dispose();
       lightGeometry.dispose();
       lightMaterials.forEach((item) => item.dispose());
@@ -156,6 +141,6 @@ export default function HeroScene() {
       canvas.remove();
     };
   }, []);
-  if (fallback) return <DottedX />;
-  return <div ref={hostRef} role="img" aria-label="Metallic dotted X moving together as one shape" className="pointer-events-none absolute inset-0" />;
+  if (fallback) return <div aria-hidden className="hero-poster"><span className="hero-poster-x">X</span></div>;
+  return <div ref={hostRef} role="img" aria-label="Spinning chrome X" className="pointer-events-none absolute inset-0" />;
 }
