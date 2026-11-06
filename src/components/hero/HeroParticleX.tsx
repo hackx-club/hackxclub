@@ -189,8 +189,10 @@ export default function HeroParticleX() {
       points = new THREE.Points(geometry, material);
       group.add(points);
       group.position.y = height * 0.23;
-      material.uniforms.uSize.value = sampled.step * 1.1 * renderer.getPixelRatio() * camera.position.z / 1000;
-      material.uniforms.uRadius.value = size * 0.35;
+      const sizeUniform = material.uniforms["uSize"];
+      if (sizeUniform) sizeUniform.value = sampled.step * 1.1 * renderer.getPixelRatio() * camera.position.z / 1000;
+      const radiusUniform = material.uniforms["uRadius"];
+      if (radiusUniform) radiusUniform.value = size * 0.35;
     };
     const onResize = () => { window.clearTimeout(resizeTimer); resizeTimer = window.setTimeout(resize, 150); };
     const onMove = (event: PointerEvent) => {
@@ -214,10 +216,12 @@ export default function HeroParticleX() {
       const targetX = 0.12 + (pointer.active ? pointer.y * 0.22 : Math.cos(elapsed * 0.3) * 0.045);
       group.rotation.y += (targetY - group.rotation.y) * blend;
       group.rotation.x += (targetX - group.rotation.x) * blend;
-      material.uniforms.uTime.value = elapsed;
-      material.uniforms.uActive.value += ((pointer.active ? 1 : 0) - material.uniforms.uActive.value) * blend;
-      material.uniforms.uPointer.value.set(pointer.x * width / 2, -pointer.y * height / 2 - group.position.y);
-      material.uniforms.uLight.value.set(-0.6 + pointer.x * 0.8, 0.8 - pointer.y * 0.5, 1);
+      const timeUniform = material.uniforms["uTime"];
+      if (timeUniform) timeUniform.value = elapsed;
+      const activeUniform = material.uniforms["uActive"];
+      if (activeUniform) activeUniform.value += ((pointer.active ? 1 : 0) - activeUniform.value) * blend;
+      material.uniforms["uPointer"]?.value.set(pointer.x * width / 2, -pointer.y * height / 2 - group.position.y);
+      material.uniforms["uLight"]?.value.set(-0.6 + pointer.x * 0.8, 0.8 - pointer.y * 0.5, 1);
       renderer.render(scene, camera);
       if (!ready && points) { ready = true; host.setAttribute("data-scene-ready", "true"); }
     };
