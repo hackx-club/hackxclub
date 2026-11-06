@@ -62,7 +62,7 @@ function AboutPage() {
           {team.map((m) => (
             <Card key={m.key}>
               {m.photo ? (
-                <div className="aspect-square w-full overflow-hidden rounded-lg"><img src={photos[m.photo]} alt={m.name} loading="lazy" className={"h-full w-full object-cover" + (m.key === 1 ? " scale-[1.35] object-[50%_20%] origin-[50%_25%]" : "")} /></div>
+                <div className="aspect-square w-full overflow-hidden rounded-lg"><img src={photos[m.photo]} alt={m.name} loading="lazy" className={"h-full w-full object-cover" + (m.key === 1 ? " object-[35%_50%]" : "")} /></div>
               ) : (
                 <div className="aspect-square rounded-lg bg-muted" />
               )}
