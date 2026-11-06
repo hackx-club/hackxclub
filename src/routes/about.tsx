@@ -4,8 +4,9 @@ import { mentors, pillars, team } from "@/content/site-content";
 import deekshana from "@/assets/deekshana.jpeg.asset.json";
 import rodick from "@/assets/rodick.jpeg.asset.json";
 import teamMember from "@/assets/team-member.png.asset.json";
+import santhosh from "@/assets/santhosh.jpeg.asset.json";
 
-const photos: Record<string, string> = { deekshana: deekshana.url, rodick: rodick.url, member: teamMember.url };
+const photos: Record<string, string> = { deekshana: deekshana.url, rodick: rodick.url, member: teamMember.url, santhosh: santhosh.url };
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/about")({

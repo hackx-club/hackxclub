@@ -1,5 +1,6 @@
 // Single source for contact details. Replace PHONE with the real number (country code, no plus).
-export const PHONE = "91XXXXXXXXXX";
+export const PHONE = "919715803110";
+export const PHONE_DISPLAY = "+91 97158 03110";
 export const REGISTER_TEXT = "Hi HackX, I want to register for HackX 1.0";
 export const whatsappUrl = (text = REGISTER_TEXT) =>
   `https://wa.me/${PHONE}?text=${encodeURIComponent(text)}`;
