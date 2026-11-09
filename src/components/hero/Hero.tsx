@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { DecodeText } from "@/components/DecodeText";
 
 const HeroScene = lazy(() => import("./HeroScene"));
 
@@ -34,8 +35,8 @@ export function Hero() {
 
       <div className="relative z-10 mt-[30vh] flex flex-col items-center md:mt-[34vh]">
         <p className="eyebrow animate-in fade-in duration-700">Student &amp; founder tech club · India</p>
-        <h1 className="headline-xl text-chrome mt-5 max-w-4xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
-          Where students build what's next.
+        <h1 className="headline-xl mt-5 max-w-4xl">
+          <DecodeText>Where students build what's next.</DecodeText>
         </h1>
         <p className="mt-6 max-w-xl text-lg text-muted-foreground md:text-xl animate-in fade-in duration-700 delay-500 fill-mode-both">
           HackX brings student builders and founders together to ship real things.
