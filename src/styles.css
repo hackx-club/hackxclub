@@ -68,6 +68,10 @@
   --foreground: oklch(0.96 0.003 250);
   --card: oklch(0.16 0 0);
   --card-foreground: oklch(0.96 0.003 250);
+  --spotlight-background: #0D0F13;
+  --spotlight-border: #2A2D33;
+  --spotlight-glow: oklch(1 0 0 / 10%);
+  --spotlight-edge: oklch(1 0 0 / 55%);
   --popover: oklch(0.16 0 0);
   --popover-foreground: oklch(0.96 0.003 250);
   --primary: oklch(0.86 0.008 250);
@@ -260,7 +264,7 @@
 }
 @utility card-lift {
   transition: transform 0.5s cubic-bezier(.22,1,.36,1), border-color 0.5s;
-  &:hover { transform: translateY(-4px); border-color: var(--input); }
+  &:hover { transform: translateY(-4px); }
 }
 @utility scroll-progress {
   position: fixed;
@@ -297,7 +301,6 @@
   place-items: center;
   width: 12rem;
   height: 5rem;
-  border: 1px dashed var(--input);
   border-radius: 0.75rem;
   color: var(--muted-foreground);
   font-size: 0.85rem;
@@ -332,3 +335,42 @@ main { animation: page-in 0.6s cubic-bezier(.22,1,.36,1); }
 .page-enter h1 { animation: line-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
 .btn-silver, .btn-ghost { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s, color 0.2s, border-color 0.2s; }
 @media (prefers-reduced-motion: reduce) { .page-enter, .page-enter h1 { animation: none; } }
+
+.spotlight-card {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--spotlight-background);
+  border: 1px solid var(--spotlight-border);
+}
+.spotlight-card::before,
+.spotlight-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.spotlight-card::before {
+  z-index: 1;
+  background: radial-gradient(circle 150px at var(--mx, 50%) var(--my, 50%), var(--spotlight-glow), transparent 100%);
+}
+.spotlight-card::after {
+  z-index: 2;
+  inset: -1px;
+  padding: 1px;
+  background: radial-gradient(circle 150px at var(--mx, 50%) var(--my, 50%), var(--spotlight-edge), transparent 100%);
+  -webkit-mask: linear-gradient(white 0 0) content-box, linear-gradient(white 0 0);
+  mask: linear-gradient(white 0 0) content-box, linear-gradient(white 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .spotlight-card:hover::before,
+  .spotlight-card:hover::after { opacity: 1; }
+}
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .spotlight-card::before,
+  .spotlight-card::after { display: none; transition: none; }
+}

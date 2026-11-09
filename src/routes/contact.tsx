@@ -6,6 +6,7 @@ import { Card, PageHeader, Section } from "@/components/layout/SiteChrome";
 import { whatsappUrl, PHONE_DISPLAY } from "@/config/site";
 import { socials } from "@/content/site-content";
 import { pageHead } from "@/lib/seo";
+import { SpotlightCard } from "@/components/SpotlightCard";
 
 export const Route = createFileRoute("/contact")({
   staticData: { sitemap: true },
@@ -58,10 +59,10 @@ function ContactPage() {
             ))}
           </div>
           {status === "done" ? (
-            <div className="rounded-2xl border border-border bg-card p-8" role="status">
+            <SpotlightCard className="rounded-2xl p-8" role="status">
               <h2 className="text-2xl font-semibold">Thanks, message received.</h2>
               <p className="mt-2 text-muted-foreground">We'll get back to you soon.</p>
-            </div>
+            </SpotlightCard>
           ) : (
             <form onSubmit={submit} noValidate className="grid content-start gap-4">
               {(["name", "email"] as const).map((n) => (

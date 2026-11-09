@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { whatsappUrl, site } from "@/config/site";
+import { SpotlightCard } from "@/components/SpotlightCard";
 
 export function Logo() {
   return (
@@ -140,7 +141,7 @@ export function Section({ title, children }: { title?: string; children: ReactNo
 }
 
 export function Card({ children }: { children: ReactNode }) {
-  return <div className="card-lift rounded-xl border border-border bg-card p-6" data-reveal>{children}</div>;
+  return <SpotlightCard className="card-lift rounded-xl p-6" data-reveal>{children}</SpotlightCard>;
 }
 
 export function MobileBar() {
@@ -181,7 +182,7 @@ export function SponsorMarquee() {
     <div className="marquee" aria-label="Sponsor slots, to be announced">
       <div className="marquee-track">
         {[...slots, ...slots].map((i, k) => (
-          <div key={k} className="sponsor-slot" aria-hidden={k >= slots.length}>Sponsor [TBA]</div>
+          <SpotlightCard key={k} className="sponsor-slot" aria-hidden={k >= slots.length}>Sponsor [TBA]</SpotlightCard>
         ))}
       </div>
     </div>

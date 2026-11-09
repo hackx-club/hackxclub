@@ -6,6 +6,7 @@ import { PageHeader, Section } from "@/components/layout/SiteChrome";
 import { whatsappUrl } from "@/config/site";
 import { registerOptions, tracks } from "@/content/site-content";
 import { pageHead } from "@/lib/seo";
+import { SpotlightCard } from "@/components/SpotlightCard";
 
 export const Route = createFileRoute("/register")({
   staticData: { sitemap: true },
@@ -54,11 +55,11 @@ function RegisterPage() {
       <PageHeader eyebrow="HackX 1.0 · 28 Dec 2026" title="Register" intro="Takes under a minute." />
       <Section>
         {status === "done" ? (
-          <div className="max-w-xl rounded-2xl border border-border bg-card p-8" role="status">
+          <SpotlightCard className="max-w-xl rounded-2xl p-8" role="status">
             <h2 className="text-3xl font-semibold tracking-tight">You're in.</h2>
             <p className="mt-3 text-muted-foreground">We've saved your registration. Message us on WhatsApp to get event updates.</p>
             <div className="mt-8">{wa}</div>
-          </div>
+          </SpotlightCard>
         ) : (
           <form onSubmit={submit} noValidate className="grid max-w-xl gap-4">
             <fieldset className="grid gap-2 text-sm">

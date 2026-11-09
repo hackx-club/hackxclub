@@ -3,6 +3,7 @@ import { Hero } from "@/components/hero/Hero";
 import { CtaBanner, SectionHeading, SponsorMarquee } from "@/components/layout/SiteChrome";
 import { hackx1, numbers, pillars } from "@/content/site-content";
 import { pageHead } from "@/lib/seo";
+import { SpotlightCard } from "@/components/SpotlightCard";
 
 export const Route = createFileRoute("/")({
   staticData: { sitemap: true },
@@ -31,11 +32,11 @@ function Index() {
         <SectionHeading eyebrow="What we do" title="Three ways we build together." />
         <div className="grid gap-4 md:grid-cols-3">
           {pillars.map((p, i) => (
-            <div key={p.title} className="card-lift rounded-xl border border-border bg-card p-8" data-reveal style={{ transitionDelay: `${i * 80}ms` }}>
+            <SpotlightCard key={p.title} className="card-lift rounded-xl p-8" data-reveal style={{ transitionDelay: `${i * 80}ms` }}>
               <p className="eyebrow">0{i + 1}</p>
               <h3 className="mt-6 text-2xl font-semibold tracking-tight">{p.title}</h3>
               <p className="mt-3 text-muted-foreground">{p.body}</p>
-            </div>
+            </SpotlightCard>
           ))}
         </div>
       </section>
@@ -56,13 +57,15 @@ function Index() {
 
       <section className="mx-auto max-w-6xl px-6 py-20">
         <SectionHeading eyebrow="Upcoming" title="HackX 1.0" />
-        <Link to="/events/hackx-1-0" className="card-lift block rounded-2xl border border-border bg-card p-8 md:p-12" data-reveal>
+        <Link to="/events/hackx-1-0" className="block">
+          <SpotlightCard className="card-lift rounded-2xl p-8 md:p-12" data-reveal>
           <div className="grid gap-6 md:grid-cols-5">
             {[["Date", hackx1.date], ["Duration", hackx1.duration], ["Prize pool", hackx1.prize], ["Food", "Included"], ["Venue", hackx1.venue]].map(([k, v]) => (
               <div key={k}><p className="eyebrow">{k}</p><p className="mt-2 text-lg font-semibold">{v}</p></div>
             ))}
           </div>
           <p className="mt-10 text-sm font-medium">See details <span className="arrow">→</span></p>
+          </SpotlightCard>
         </Link>
       </section>
 
