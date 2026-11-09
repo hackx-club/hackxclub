@@ -23,22 +23,36 @@ export function StackingCards({ items }: { items: readonly StackItem[] }) {
       tops = slots.map((slot) => parseFloat(getComputedStyle(slot).top) || 0);
       heights = slots.map((slot) => slot.offsetHeight);
     };
-    const update = () => {
+    const cards = slots.map((slot) => slot.querySelector<HTMLElement>(".stack-card"));
+    const current = slots.map(() => 0);
+    let last = 0;
+    const update = (now: number) => {
       frame = 0;
+      const dt = last ? Math.min(now - last, 50) : 16;
+      last = now;
+      const ease = 1 - Math.exp(-dt / 90);
+      let moving = false;
       slots.forEach((slot, index) => {
         const next = slots[index + 1];
-        const card = slot.querySelector<HTMLElement>(".stack-card");
+        const card = cards[index];
         if (!card) return;
-        let covered = 0;
+        let target = 0;
         if (!motion.matches && next) {
           const top = tops[index] ?? 0;
           const nextTop = tops[index + 1] ?? 0;
           const height = heights[index] ?? 0;
-          covered = Math.max(0, Math.min(1, (top + height - next.getBoundingClientRect().top) / Math.max(1, height - (nextTop - top))));
+          target = Math.max(0, Math.min(1, (top + height - next.getBoundingClientRect().top) / Math.max(1, height - (nextTop - top))));
         }
-        card.style.setProperty("--stack-scale", String(1 - covered * 0.06));
-        card.style.setProperty("--stack-brightness", String(1 - covered * 0.3));
+        const value = motion.matches ? target : (current[index] ?? 0) + (target - (current[index] ?? 0)) * ease;
+        current[index] = Math.abs(target - value) < 0.001 ? target : value;
+        if (current[index] !== target) moving = true;
+        const c = current[index] ?? 0;
+        card.style.setProperty("--stack-scale", String(1 - c * 0.08));
+        card.style.setProperty("--stack-brightness", String(1 - c * 0.5));
+        card.style.setProperty("--stack-lift", String(c));
       });
+      if (moving) frame = requestAnimationFrame(update);
+      else last = 0;
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
     const onResize = () => { measure(); schedule(); };
@@ -48,7 +62,7 @@ export function StackingCards({ items }: { items: readonly StackItem[] }) {
     window.addEventListener("resize", onResize);
     motion.addEventListener("change", schedule);
     measure();
-    update();
+    frame = requestAnimationFrame(update);
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
