@@ -5,7 +5,6 @@ import { hackx1, numbers, pillars } from "@/content/site-content";
 import { pageHead } from "@/lib/seo";
 import { SpotlightCard } from "@/components/SpotlightCard";
 import { StackingCards } from "@/components/StackingCards";
-import { DecodeText } from "@/components/DecodeText";
 
 export const Route = createFileRoute("/")({
   staticData: { sitemap: true },
@@ -64,7 +63,7 @@ function Index() {
       </section>
 
       <section className="py-20">
-        <div className="mx-auto max-w-6xl px-6"><p className="eyebrow mb-6"><DecodeText>Sponsors</DecodeText></p></div>
+        <div className="mx-auto max-w-6xl px-6"><p className="eyebrow mb-6">Sponsors</p></div>
         <SponsorMarquee />
       </section>
 
