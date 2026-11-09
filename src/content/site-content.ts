@@ -72,7 +72,7 @@ export const mentors = [
 ] as const;
 
 export const socials = {
-  email: TBA,
-  instagram: TBA,
+  email: "clubhackx@gmail.com",
+  instagram: "hackx.club",
   linkedin: TBA,
 };

@@ -36,8 +36,8 @@ function ContactPage() {
   const channels = [
     ["WhatsApp", PHONE_DISPLAY, whatsappUrl("Hi HackX")],
     ["Phone", PHONE_DISPLAY, "tel:+919715803110"],
-    ["Email", socials.email, null],
-    ["Instagram", socials.instagram, null],
+    ["Email", socials.email, `mailto:${socials.email}`],
+    ["Instagram", socials.instagram, `https://www.instagram.com/${socials.instagram}/`],
     ["LinkedIn", socials.linkedin, null],
   ] as const;
   return (
