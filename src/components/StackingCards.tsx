@@ -4,7 +4,7 @@ import { SpotlightCard } from "@/components/SpotlightCard";
 type StackItem = {
   title: string;
   description: string;
-  photo?: string;
+  photo?: string | undefined;
   bio?: string;
 };
 
