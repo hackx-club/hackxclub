@@ -135,7 +135,7 @@ export function PageHeader({ eyebrow, title, intro }: { eyebrow: string; title: 
 export function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
     <section className="mx-auto max-w-6xl px-6 py-12">
-      {title && <h2 className="mb-6 text-2xl font-semibold tracking-tight md:text-3xl"><DecodeText>{title}</DecodeText></h2>}
+      {title && <h2 className="mb-6 text-2xl font-semibold tracking-tight md:text-3xl">{title}</h2>}
       {children}
     </section>
   );
@@ -158,7 +158,7 @@ export function SectionHeading({ eyebrow, title, children }: { eyebrow?: string;
   return (
     <div className="mb-10 max-w-3xl" data-reveal>
       {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-      <h2 className="headline-lg mt-3"><DecodeText>{title}</DecodeText></h2>
+      <h2 className="headline-lg mt-3">{title}</h2>
       {children && <p className="mt-5 text-lg text-muted-foreground">{children}</p>}
     </div>
   );
@@ -167,7 +167,7 @@ export function SectionHeading({ eyebrow, title, children }: { eyebrow?: string;
 export function CtaBanner({ title, body }: { title: string; body?: string }) {
   return (
     <section className="mx-auto max-w-6xl px-6 py-24 text-center" data-reveal>
-      <h2 className="headline-lg mx-auto max-w-3xl"><DecodeText>{title}</DecodeText></h2>
+      <h2 className="headline-lg mx-auto max-w-3xl">{title}</h2>
       {body && <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">{body}</p>}
       <div className="mt-10 flex flex-wrap justify-center gap-3">
         <Link to="/register" className="btn-silver">Register for HackX 1.0 <span className="arrow">→</span></Link>
