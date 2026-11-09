@@ -17,10 +17,10 @@ export function DecodeText({ children }: { children: string }) {
     const finish = () => {
       cancelAnimationFrame(frame);
       glyphs.forEach((glyph) => {
-        glyph.textContent = glyph.dataset.final ?? "";
+        glyph.textContent = glyph.dataset['final'] ?? "";
         glyph.classList.remove("is-scrambling");
       });
-      host.dataset.decodeState = "done";
+      host.dataset['decodeState'] = "done";
       played.current = true;
     };
     const tick = (now: number) => {
@@ -29,7 +29,7 @@ export function DecodeText({ children }: { children: string }) {
       const locked = Math.floor(progress * glyphs.length);
       glyphs.forEach((glyph, index) => {
         const settled = index < locked;
-        glyph.textContent = settled ? glyph.dataset.final ?? "" : CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] ?? "#";
+        glyph.textContent = settled ? glyph.dataset['final'] ?? "" : CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)] ?? "#";
         glyph.classList.toggle("is-scrambling", !settled);
       });
       if (progress < 1) frame = requestAnimationFrame(tick);
@@ -40,7 +40,7 @@ export function DecodeText({ children }: { children: string }) {
       played.current = true;
       observer.disconnect();
       if (motion.matches) finish();
-      else { host.dataset.decodeState = "running"; frame = requestAnimationFrame(tick); }
+      else { host.dataset['decodeState'] = "running"; frame = requestAnimationFrame(tick); }
     }, { threshold: 0.15 });
     const onMotionChange = () => { if (motion.matches) { observer.disconnect(); finish(); } };
     if (motion.matches) finish();
