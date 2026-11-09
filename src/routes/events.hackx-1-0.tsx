@@ -4,6 +4,7 @@ import { hackx1 as e, tracks } from "@/content/site-content";
 import { site } from "@/config/site";
 import { pageHead } from "@/lib/seo";
 import { SpotlightCard } from "@/components/SpotlightCard";
+import { DecodeText } from "@/components/DecodeText";
 
 export const Route = createFileRoute("/events/hackx-1-0")({
   staticData: { sitemap: true },
@@ -80,7 +81,7 @@ function EventPage() {
         </div>
       </Section>
       <section className="py-12">
-        <div className="mx-auto max-w-6xl px-6"><h2 className="mb-6 text-2xl font-semibold tracking-tight md:text-3xl">Sponsors</h2></div>
+        <div className="mx-auto max-w-6xl px-6"><h2 className="mb-6 text-2xl font-semibold tracking-tight md:text-3xl"><DecodeText>Sponsors</DecodeText></h2></div>
         <SponsorMarquee />
       </section>
       <CtaBanner title="Save your spot." />

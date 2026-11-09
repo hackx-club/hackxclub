@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Project rules
+- Page and section headlines use DecodeText with reserved glyph widths, aria-label final text and a one-shot IntersectionObserver; animation writes glyphs directly and reduced motion resolves immediately.
 - What we do and Mentors share StackingCards built with CSS sticky slots and requestAnimationFrame-throttled scroll updates to inner SpotlightCard transforms; reduced motion removes sticky behavior, avoiding dependencies and React per-scroll renders.
 - All framed content cards use SpotlightCard; mouse coordinates are written directly to CSS variables so pointer movement never schedules React renders, with touch/reduced-motion effects disabled in CSS.
 - All editable site copy (dates, tracks, FAQ, team, numbers) lives in src/content/site-content.ts; pages read from it so content changes happen in one place.

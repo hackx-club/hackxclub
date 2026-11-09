@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Card, CtaBanner, PageHeader, Section } from "@/components/layout/SiteChrome";
 import { StackingCards } from "@/components/StackingCards";
+import { DecodeText } from "@/components/DecodeText";
 import { mentors, pillars, team } from "@/content/site-content";
 import deekshana from "@/assets/deekshana.jpeg.asset.json";
 import rodick from "@/assets/rodick.jpeg.asset.json";
@@ -34,7 +35,7 @@ function AboutPage() {
         </div>
       </Section>
       <Section title="Mission">
-        <p className="headline-lg max-w-4xl" data-reveal>Give every student builder a place to ship, and people to ship with.</p>
+        <p className="headline-lg max-w-4xl" data-reveal><DecodeText>Give every student builder a place to ship, and people to ship with.</DecodeText></p>
       </Section>
       <Section title="Values">
         <div className="grid gap-4 md:grid-cols-3">
