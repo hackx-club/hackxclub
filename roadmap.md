@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Add and verify sticky scroll stacks only for What we do and Mentors, including mobile and reduced motion.
 - [x] Add reusable silver spotlight to all cards; pointer tracking, border glow, fading, FAQ clicks and touch/reduced-motion disabling verified; other content unchanged.
 - [x] Replaced the home sphere with a metallic dotted X moving as one shape; site logo unchanged; desktop/mobile rendering and motion checked
 - [x] Separate pages, shared menu/footer/WhatsApp button, sitemap

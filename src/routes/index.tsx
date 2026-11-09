@@ -4,6 +4,7 @@ import { CtaBanner, SectionHeading, SponsorMarquee } from "@/components/layout/S
 import { hackx1, numbers, pillars } from "@/content/site-content";
 import { pageHead } from "@/lib/seo";
 import { SpotlightCard } from "@/components/SpotlightCard";
+import { StackingCards } from "@/components/StackingCards";
 
 export const Route = createFileRoute("/")({
   staticData: { sitemap: true },
@@ -30,15 +31,7 @@ function Index() {
 
       <section className="mx-auto max-w-6xl px-6 py-20">
         <SectionHeading eyebrow="What we do" title="Three ways we build together." />
-        <div className="grid gap-4 md:grid-cols-3">
-          {pillars.map((p, i) => (
-            <SpotlightCard key={p.title} className="card-lift rounded-xl p-8" data-reveal style={{ transitionDelay: `${i * 80}ms` }}>
-              <p className="eyebrow">0{i + 1}</p>
-              <h3 className="mt-6 text-2xl font-semibold tracking-tight">{p.title}</h3>
-              <p className="mt-3 text-muted-foreground">{p.body}</p>
-            </SpotlightCard>
-          ))}
-        </div>
+        <StackingCards items={pillars.map((p) => ({ title: p.title, description: p.body }))} />
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-20">

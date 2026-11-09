@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Card, CtaBanner, PageHeader, Section } from "@/components/layout/SiteChrome";
+import { StackingCards } from "@/components/StackingCards";
 import { mentors, pillars, team } from "@/content/site-content";
 import deekshana from "@/assets/deekshana.jpeg.asset.json";
 import rodick from "@/assets/rodick.jpeg.asset.json";
@@ -41,21 +42,10 @@ function AboutPage() {
         </div>
       </Section>
       <Section title="What we do">
-        <div className="grid gap-4 md:grid-cols-3">
-          {pillars.map((p) => <Card key={p.title}><h3 className="text-xl font-semibold">{p.title}</h3><p className="mt-2 text-muted-foreground">{p.body}</p></Card>)}
-        </div>
+        <StackingCards items={pillars.map((p) => ({ title: p.title, description: p.body }))} />
       </Section>
       <Section title="Mentors">
-        <div className="grid gap-4 md:grid-cols-2">
-          {mentors.map((m) => (
-            <Card key={m.name}>
-              <img src={photos[m.photo]} alt={m.name} loading="lazy" className="aspect-square w-full max-w-[220px] rounded-lg object-cover" />
-              <p className="mt-4 text-xl font-semibold">{m.name}</p>
-              <p className="text-sm text-muted-foreground">{m.role}</p>
-              <p className="mt-3 text-muted-foreground">{m.bio}</p>
-            </Card>
-          ))}
-        </div>
+        <StackingCards items={mentors.map((m) => ({ title: m.name, description: m.role, photo: photos[m.photo], bio: m.bio }))} />
       </Section>
       <Section title="Team">
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">

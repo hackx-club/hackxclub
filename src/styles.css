@@ -74,6 +74,7 @@
   --spotlight-edge: oklch(1 0 0 / 65%);
   --spotlight-radius: 85px;
   --spotlight-edge-radius: 100px;
+  --stack-number: #C9CED6;
   --popover: oklch(0.16 0 0);
   --popover-foreground: oklch(0.96 0.003 250);
   --primary: oklch(0.86 0.008 250);
@@ -375,4 +376,46 @@ main { animation: page-in 0.6s cubic-bezier(.22,1,.36,1); }
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
   .spotlight-card::before,
   .spotlight-card::after { display: none; transition: none; }
+}
+
+.stacking-cards {
+  --stack-top: 88px;
+  --stack-step: 24px;
+  display: grid;
+  gap: 180px;
+  padding-bottom: 180px;
+  isolation: isolate;
+}
+.stack-slot {
+  position: sticky;
+  top: calc(var(--stack-top) + var(--stack-index) * var(--stack-step));
+  z-index: var(--stack-index);
+}
+.stack-card {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  min-height: 260px;
+  padding: 40px;
+  border-radius: 8px;
+  transform-origin: center top;
+  transform: scale(var(--stack-scale, 1));
+  filter: brightness(var(--stack-brightness, 1));
+}
+.stack-number { flex-shrink: 0; color: var(--stack-number); font-size: 64px; font-weight: 700; line-height: 1; letter-spacing: 0; }
+.stack-copy { flex: 1; min-width: 0; }
+.stack-title { font-size: 32px; font-weight: 700; line-height: 1.15; letter-spacing: 0; overflow-wrap: anywhere; }
+.stack-photo { width: 144px; height: 144px; flex-shrink: 0; object-fit: cover; border-radius: 8px; }
+@media (max-width: 767px) {
+  .stacking-cards { --stack-top: 80px; --stack-step: 16px; gap: 100px; padding-bottom: 100px; }
+  .stack-card { min-height: 200px; padding: 24px; gap: 16px; flex-wrap: wrap; }
+  .stack-number { font-size: 40px; }
+  .stack-copy { flex-basis: calc(100% - 80px); }
+  .stack-title { font-size: 24px; }
+  .stack-photo { width: 72px; height: 72px; margin-left: 64px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stacking-cards { gap: 16px; padding-bottom: 0; }
+  .stack-slot { position: relative; top: auto; }
+  .stack-card { transform: none; filter: none; }
 }
