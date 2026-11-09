@@ -21,7 +21,7 @@ export function SpotlightCard({ as: Tag = "div", className = "", onMouseMove, on
         frame.current = 0;
         const point = position.current;
         if (!point || !card.isConnected || !window.matchMedia("(prefers-reduced-motion: no-preference)").matches) return;
-        const ease = 1 - Math.exp(-(time - point.time) / 150);
+        const ease = 1 - Math.exp(-(time - point.time) / 280);
         point.time = time;
         point.x += (point.targetX - point.x) * ease;
         point.y += (point.targetY - point.y) * ease;
