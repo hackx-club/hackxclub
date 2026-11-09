@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Add reusable silver spotlight to all cards; verify pointer, touch and reduced-motion behavior without changing other content.
 - [x] Replaced the home sphere with a metallic dotted X moving as one shape; site logo unchanged; desktop/mobile rendering and motion checked
 - [x] Separate pages, shared menu/footer/WhatsApp button, sitemap
 - [x] Uploaded HackX logo in menu, footer, browser tab
