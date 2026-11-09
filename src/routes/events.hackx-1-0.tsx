@@ -3,6 +3,7 @@ import { Card, CtaBanner, PageHeader, Section, SponsorMarquee } from "@/componen
 import { hackx1 as e, tracks } from "@/content/site-content";
 import { site } from "@/config/site";
 import { pageHead } from "@/lib/seo";
+import { SpotlightCard } from "@/components/SpotlightCard";
 
 export const Route = createFileRoute("/events/hackx-1-0")({
   staticData: { sitemap: true },
@@ -71,10 +72,10 @@ function EventPage() {
       <Section title="FAQ">
         <div className="space-y-3">
           {e.faq.map(([q, a]) => (
-            <details key={q} className="rounded-xl border border-border bg-card px-6 py-4" data-reveal>
+            <SpotlightCard as="details" key={q} className="rounded-xl px-6 py-4" data-reveal>
               <summary className="cursor-pointer font-medium">{q}</summary>
               <p className="mt-3 text-muted-foreground">{a}</p>
-            </details>
+            </SpotlightCard>
           ))}
         </div>
       </Section>
