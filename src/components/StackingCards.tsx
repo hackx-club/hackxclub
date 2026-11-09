@@ -17,6 +17,12 @@ export function StackingCards({ items }: { items: readonly StackItem[] }) {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const slots = Array.from(host.querySelectorAll<HTMLElement>(".stack-slot"));
     let frame = 0;
+    let tops: number[] = [];
+    let heights: number[] = [];
+    const measure = () => {
+      tops = slots.map((slot) => parseFloat(getComputedStyle(slot).top) || 0);
+      heights = slots.map((slot) => slot.offsetHeight);
+    };
     const update = () => {
       frame = 0;
       slots.forEach((slot, index) => {
@@ -25,9 +31,9 @@ export function StackingCards({ items }: { items: readonly StackItem[] }) {
         if (!card) return;
         let covered = 0;
         if (!motion.matches && next) {
-          const top = parseFloat(getComputedStyle(slot).top);
-          const nextTop = parseFloat(getComputedStyle(next).top);
-          const height = slot.offsetHeight;
+          const top = tops[index] ?? 0;
+          const nextTop = tops[index + 1] ?? 0;
+          const height = heights[index] ?? 0;
           covered = Math.max(0, Math.min(1, (top + height - next.getBoundingClientRect().top) / Math.max(1, height - (nextTop - top))));
         }
         card.style.setProperty("--stack-scale", String(1 - covered * 0.06));
@@ -35,17 +41,19 @@ export function StackingCards({ items }: { items: readonly StackItem[] }) {
       });
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
-    const observer = new ResizeObserver(schedule);
+    const onResize = () => { measure(); schedule(); };
+    const observer = new ResizeObserver(onResize);
     observer.observe(host);
     window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
+    window.addEventListener("resize", onResize);
     motion.addEventListener("change", schedule);
+    measure();
     update();
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
       window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      window.removeEventListener("resize", onResize);
       motion.removeEventListener("change", schedule);
     };
   }, [items]);

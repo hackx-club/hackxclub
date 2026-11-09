@@ -2,7 +2,10 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { DecodeText } from "@/components/DecodeText";
 
-const HeroScene = lazy(() => import("./HeroScene"));
+// Start downloading the 3D X as soon as this module loads in the browser, not after hydration.
+const loadScene = () => import("./HeroScene");
+if (typeof window !== "undefined") void loadScene();
+const HeroScene = lazy(loadScene);
 
 function StaticX() {
   return (

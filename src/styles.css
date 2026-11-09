@@ -383,7 +383,16 @@ main { animation: page-in 0.6s cubic-bezier(.22,1,.36,1); }
   padding: 40px;
   transform-origin: center top;
   transform: scale(var(--stack-scale, 1));
-  filter: brightness(var(--stack-brightness, 1));
+  will-change: transform;
+}
+.stack-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--background);
+  opacity: calc(1 - var(--stack-brightness, 1));
+  pointer-events: none;
 }
 .stack-number { flex-shrink: 0; color: var(--stack-number); font-size: 64px; font-weight: 700; line-height: 1; letter-spacing: 0; }
 .stack-copy { flex: 1; min-width: 0; }
@@ -400,7 +409,8 @@ main { animation: page-in 0.6s cubic-bezier(.22,1,.36,1); }
 @media (prefers-reduced-motion: reduce) {
   .stacking-cards { gap: 16px; padding-bottom: 0; }
   .stack-slot { position: relative; top: auto; }
-  .stack-card { transform: none; filter: none; }
+  .stack-card { transform: none; will-change: auto; }
+  .stack-card::after { display: none; }
 }
 
 .decode-text { color: var(--decode-locked); }
