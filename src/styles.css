@@ -421,3 +421,48 @@ main { animation: page-in 0.6s cubic-bezier(.22,1,.36,1); }
 .decode-reserve { visibility: hidden; }
 .decode-glyph { position: absolute; inset: 0; color: var(--decode-locked); text-align: center; }
 .decode-glyph.is-scrambling { color: var(--decode-scramble); }
+
+/* HackX 1.0 tracks */
+.tracks { --ease-apple: cubic-bezier(0.22, 1, 0.36, 1); }
+.tracks-word { display: inline-block; opacity: 0; transform: translateY(0.5em); transition: opacity 0.6s var(--ease-apple), transform 0.6s var(--ease-apple); transition-delay: calc(var(--i) * 90ms); }
+.tracks-sub { opacity: 0; transition: opacity 0.6s var(--ease-apple) 0.3s; }
+.track-card {
+  position: relative; overflow: hidden; padding: 32px; border-radius: 20px;
+  background: linear-gradient(160deg, oklch(1 0 0 / 5%), oklch(1 0 0 / 1.5%));
+  border: 1px solid oklch(1 0 0 / 12%);
+  box-shadow: inset 0 1px 0 oklch(1 0 0 / 8%);
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.6s var(--ease-apple), transform 0.6s var(--ease-apple), border-color 0.6s var(--ease-apple);
+  transition-delay: calc(var(--i) * 110ms + 150ms);
+}
+.track-card::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), oklch(1 0 0 / 9%), transparent 70%);
+  transition: opacity 0.6s var(--ease-apple);
+}
+.track-card::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; opacity: 0;
+  background: linear-gradient(110deg, transparent 30%, var(--silver-light) 50%, transparent 70%) 200% 0 / 250% 100%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+  transition: opacity 0.6s var(--ease-apple);
+}
+.track-num { position: absolute; top: 12px; right: 20px; font-size: 88px; font-weight: 700; line-height: 1; color: var(--silver); opacity: 0.08; }
+.track-icon { width: 32px; height: 32px; color: var(--silver-light); }
+.tracks-in .tracks-word, .tracks-in .track-card { opacity: 1; transform: none; }
+.tracks-in .tracks-sub { opacity: 1; }
+@keyframes track-shimmer { to { background-position: -50% 0; } }
+@media (hover: hover) and (pointer: fine) {
+  .tracks-in .track-card:hover {
+    transition-delay: 0s; border-color: oklch(1 0 0 / 22%);
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-4px);
+  }
+  .track-card:hover::before { opacity: 1; }
+  .track-card:hover::after { opacity: 0.6; animation: track-shimmer 3s linear infinite; }
+}
+@media (hover: none) {
+  .tracks-in .track-card:active { transition-delay: 0s; transition-duration: 0.2s; transform: scale(0.98); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tracks-word, .tracks-sub, .track-card { opacity: 1; transform: none !important; transition: none; }
+  .track-card::after { animation: none !important; }
+}

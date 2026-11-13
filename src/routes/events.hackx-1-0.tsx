@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Card, CtaBanner, PageHeader, Section, SponsorMarquee } from "@/components/layout/SiteChrome";
-import { hackx1 as e, tracks } from "@/content/site-content";
+import { hackx1 as e } from "@/content/site-content";
+import { TracksSection } from "@/components/TracksSection";
 import { site } from "@/config/site";
 import { pageHead } from "@/lib/seo";
 import { SpotlightCard } from "@/components/SpotlightCard";
@@ -57,9 +58,7 @@ function EventPage() {
           ))}
         </ol>
       </Section>
-      <Section title="Tracks">
-        <div className="grid gap-4 md:grid-cols-5">{tracks.map((t) => <Card key={t}><p className="font-medium">{t}</p></Card>)}</div>
-      </Section>
+      <TracksSection />
       <Section title="Prizes & food">
         <div className="grid gap-4 md:grid-cols-3">
           {e.prizes.map((p) => <Card key={p}><p className="font-medium">{p}</p></Card>)}
