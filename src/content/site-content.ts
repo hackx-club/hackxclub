@@ -6,7 +6,14 @@ export const registerOptions = [
   { value: "general", label: "No specific event, keep me posted" },
 ];
 
-export const tracks = ["Track 1 " + TBA, "Track 2 " + TBA, "Track 3 " + TBA, "Track 4 " + TBA, "Track 5 " + TBA];
+// HackX 1.0 tracks. Edit or add a track here; icon is one of: ai, industry, climate, open.
+export const trackList = [
+  { title: "AI & Automation", icon: "ai", body: "Build smart systems that learn, decide and take repetitive work off people's hands." },
+  { title: "Industry & Supply Chain (Industry 5.0)", icon: "industry", body: "Make factories, logistics and supply chains faster, smarter and more human-friendly." },
+  { title: "Climate & Agritech", icon: "climate", body: "Solve problems in farming, energy and the environment for a more sustainable future." },
+  { title: "Open Track", icon: "open", body: "Have an idea that doesn't fit above? Build it anyway." },
+] as const;
+export const tracks = trackList.map((t) => t.title);
 
 export const numbers = [
   { value: 0, suffix: "+", label: "Builders " + TBA },
