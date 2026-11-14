@@ -1,4 +1,5 @@
 # Roadmap
+
 - [x] Speed up Home headline, entrances, X spin and pointer response without changing the logo.
 - [x] Add Lakshana (social media management), Sujith and Jagankumar (operations coordinators); compress and bundle every portrait locally.
 - [x] Configure external hosting targets and document Vercel/Node deployment requirements; live external deployment requires the user's hosting account.

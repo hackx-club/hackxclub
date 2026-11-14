@@ -1,4 +1,5 @@
 <!-- LOVABLE:BEGIN -->
+
 > [!IMPORTANT]
 > This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
 > published git history — force pushing, or rebasing/amending/squashing commits
@@ -7,9 +8,11 @@
 >
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
+
 <!-- LOVABLE:END -->
 
 ## Project rules
+
 - Only main page headlines (hero h1 and PageHeader h1) use DecodeText; section titles stay plain. DecodeText uses with reserved glyph widths, aria-label final text and a one-shot IntersectionObserver; animation writes glyphs directly and reduced motion resolves immediately.
 - What we do and Mentors share StackingCards built with CSS sticky slots and requestAnimationFrame-throttled scroll updates (slot offsets cached on resize, dimming via an opacity overlay instead of CSS filter) to inner card transforms; reduced motion removes sticky behavior, avoiding dependencies and React per-scroll renders.
 - All framed content cards use SpotlightCard, a plain card with only a border highlight on hover: no pointer tracking, backdrop blur or smooth-scroll library, to keep scrolling native and fast.

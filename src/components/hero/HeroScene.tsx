@@ -13,7 +13,12 @@ function palette(name: string) {
   context.fillStyle = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   context.fillRect(0, 0, 1, 1);
   const pixel = context.getImageData(0, 0, 1, 1).data;
-  return new THREE.Color().setRGB((pixel[0] ?? 0) / 255, (pixel[1] ?? 0) / 255, (pixel[2] ?? 0) / 255, THREE.SRGBColorSpace);
+  return new THREE.Color().setRGB(
+    (pixel[0] ?? 0) / 255,
+    (pixel[1] ?? 0) / 255,
+    (pixel[2] ?? 0) / 255,
+    THREE.SRGBColorSpace,
+  );
 }
 
 export default function HeroScene() {
@@ -44,8 +49,16 @@ export default function HeroScene() {
     const studio = new THREE.Scene();
     const lightGeometry = new THREE.PlaneGeometry(1, 1);
     const lightMaterials: THREE.MeshBasicMaterial[] = [];
-    const softbox = (intensity: number, position: [number, number, number], scale: [number, number, number], rotation: [number, number, number]) => {
-      const material = new THREE.MeshBasicMaterial({ color: lightColor.clone().multiplyScalar(intensity), side: THREE.DoubleSide });
+    const softbox = (
+      intensity: number,
+      position: [number, number, number],
+      scale: [number, number, number],
+      rotation: [number, number, number],
+    ) => {
+      const material = new THREE.MeshBasicMaterial({
+        color: lightColor.clone().multiplyScalar(intensity),
+        side: THREE.DoubleSide,
+      });
       lightMaterials.push(material);
       const mesh = new THREE.Mesh(lightGeometry, material);
       mesh.position.set(...position);
@@ -62,7 +75,13 @@ export default function HeroScene() {
     scene.environment = environment.texture;
     pmrem.dispose();
     const geometry = new RoundedBoxGeometry(0.55, 3.2, 0.55, 6, 0.12);
-    const material = new THREE.MeshPhysicalMaterial({ color: silver, metalness: 1, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.08 });
+    const material = new THREE.MeshPhysicalMaterial({
+      color: silver,
+      metalness: 1,
+      roughness: 0.12,
+      clearcoat: 1,
+      clearcoatRoughness: 0.08,
+    });
     const group = new THREE.Group();
     for (const angle of [Math.PI / 4, -Math.PI / 4]) {
       const bar = new THREE.Mesh(geometry, material);
@@ -90,18 +109,24 @@ export default function HeroScene() {
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       // Preserve the current page copy; restore only the original solid X artwork.
-      const scale = Math.min(height * 0.30, width * 0.44) / (height * 0.64);
+      const scale = Math.min(height * 0.3, width * 0.44) / (height * 0.64);
       group.scale.setScalar(scale);
       group.position.y = 1.45;
     };
     const onMove = (event: PointerEvent) => {
       const rect = host.getBoundingClientRect();
-      pointer.x = THREE.MathUtils.clamp((event.clientX - rect.left) / width * 2 - 1, -1, 1);
-      pointer.y = THREE.MathUtils.clamp(1 - (event.clientY - rect.top) / height * 2, -1, 1);
+      pointer.x = THREE.MathUtils.clamp(((event.clientX - rect.left) / width) * 2 - 1, -1, 1);
+      pointer.y = THREE.MathUtils.clamp(1 - ((event.clientY - rect.top) / height) * 2, -1, 1);
     };
-    const onLeave = () => { pointer.x = pointer.y = 0; };
-    const onVisibility = () => { visible = document.visibilityState === "visible"; };
-    const observer = new IntersectionObserver(([entry]) => { onScreen = entry?.isIntersecting ?? true; });
+    const onLeave = () => {
+      pointer.x = pointer.y = 0;
+    };
+    const onVisibility = () => {
+      visible = document.visibilityState === "visible";
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      onScreen = entry?.isIntersecting ?? true;
+    });
     observer.observe(host);
     const tick = (now: number) => {
       raf = requestAnimationFrame(tick);
@@ -112,9 +137,15 @@ export default function HeroScene() {
       group.rotation.x += (pointer.y * TILT - group.rotation.x) * (1 - Math.exp(-6 * dt));
       mouseLight.position.set(pointer.x * 4, pointer.y * 3, 3);
       renderer.render(scene, camera);
-      if (!ready) { ready = true; host.setAttribute("data-scene-ready", "true"); }
+      if (!ready) {
+        ready = true;
+        host.setAttribute("data-scene-ready", "true");
+      }
     };
-    const contextLost = (event: Event) => { event.preventDefault(); setFallback(true); };
+    const contextLost = (event: Event) => {
+      event.preventDefault();
+      setFallback(true);
+    };
     resize();
     window.addEventListener("resize", resize);
     window.addEventListener("pointermove", onMove, { passive: true });
@@ -141,6 +172,18 @@ export default function HeroScene() {
       canvas.remove();
     };
   }, []);
-  if (fallback) return <div aria-hidden className="hero-poster"><span className="hero-poster-x">X</span></div>;
-  return <div ref={hostRef} role="img" aria-label="Spinning chrome X" className="pointer-events-none absolute inset-0" />;
+  if (fallback)
+    return (
+      <div aria-hidden className="hero-poster">
+        <span className="hero-poster-x">X</span>
+      </div>
+    );
+  return (
+    <div
+      ref={hostRef}
+      role="img"
+      aria-label="Spinning chrome X"
+      className="pointer-events-none absolute inset-0"
+    />
+  );
 }
