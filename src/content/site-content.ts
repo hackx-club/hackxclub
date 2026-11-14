@@ -3,12 +3,25 @@ export const TBA = "[TO BE ANNOUNCED]";
 
 export const homeStory = {
   heroTitle: "HackX. Big ideas start here.",
-  heroIntro: "Made by students, for students. Meet builders and founders, and take your idea into the real world.",
+  heroIntro:
+    "Made by students, for students. Meet builders and founders, and take your idea into the real world.",
   title: "We stopped waiting for the future. We started building it.",
   chapters: [
-    { number: "01", title: "An idea. Nowhere to take it.", body: "Everyone tells students to get ready for the future. But having a big idea and finding a place to start are two different things." },
-    { number: "02", title: "So we made our own starting point.", body: "HackX brings student builders and founders into one room. A place to meet, try something, and build alongside people who get it." },
-    { number: "03", title: "Your idea is part of the next chapter.", body: "Bring it to HackX 1.0. Twelve hours to turn what if into something real." },
+    {
+      number: "01",
+      title: "An idea. Nowhere to take it.",
+      body: "Everyone tells students to get ready for the future. But having a big idea and finding a place to start are two different things.",
+    },
+    {
+      number: "02",
+      title: "So we made our own starting point.",
+      body: "HackX brings student builders and founders into one room. A place to meet, try something, and build alongside people who get it.",
+    },
+    {
+      number: "03",
+      title: "Your idea is part of the next chapter.",
+      body: "Bring it to HackX 1.0. Twelve hours to turn what if into something real.",
+    },
   ],
   pillarsTitle: "Meet. Make. Move forward.",
   eventEyebrow: "The next chapter",
@@ -23,10 +36,26 @@ export const registerOptions = [
 
 // HackX 1.0 tracks. Edit or add a track here; icon is one of: ai, industry, climate, open.
 export const trackList = [
-  { title: "AI & Automation", icon: "ai", body: "Build smart systems that learn, decide and take repetitive work off people's hands." },
-  { title: "Industry & Supply Chain (Industry 5.0)", icon: "industry", body: "Make factories, logistics and supply chains faster, smarter and more human-friendly." },
-  { title: "Climate & Agritech", icon: "climate", body: "Solve problems in farming, energy and the environment for a more sustainable future." },
-  { title: "Open Track", icon: "open", body: "Have an idea that doesn't fit above? Build it anyway." },
+  {
+    title: "AI & Automation",
+    icon: "ai",
+    body: "Build smart systems that learn, decide and take repetitive work off people's hands.",
+  },
+  {
+    title: "Industry & Supply Chain (Industry 5.0)",
+    icon: "industry",
+    body: "Make factories, logistics and supply chains faster, smarter and more human-friendly.",
+  },
+  {
+    title: "Climate & Agritech",
+    icon: "climate",
+    body: "Solve problems in farming, energy and the environment for a more sustainable future.",
+  },
+  {
+    title: "Open Track",
+    icon: "open",
+    body: "Have an idea that doesn't fit above? Build it anyway.",
+  },
 ] as const;
 export const tracks = trackList.map((t) => t.title);
 
@@ -39,7 +68,10 @@ export const numbers = [
 
 export const pillars = [
   { title: "Hackathons", body: "Focused, time-boxed events where students ship working products." },
-  { title: "Founder meetups", body: "Small rooms where student builders meet people who have started companies." },
+  {
+    title: "Founder meetups",
+    body: "Small rooms where student builders meet people who have started companies.",
+  },
   { title: "Builders' network", body: "People who build alongside each other between events." },
 ];
 
@@ -74,8 +106,9 @@ export const hackx1 = {
 export const team = [
   { key: 1, name: "Dharun", role: "Founder", photo: "member" },
   { key: 2, name: "Santhosh", role: "Co-founder", photo: "santhosh" },
-  { key: 3, name: "Team member " + TBA, role: "Role " + TBA },
-  { key: 4, name: "Team member " + TBA, role: "Role " + TBA },
+  { key: 3, name: "Lakshana", role: "Social Media Management", photo: "lakshana" },
+  { key: 4, name: "Sujith", role: "Operations Coordinator", photo: "sujith" },
+  { key: 5, name: "Jagankumar", role: "Operations Coordinator", photo: "jagankumar" },
 ];
 
 export const mentors = [

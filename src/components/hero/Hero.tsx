@@ -38,16 +38,22 @@ export function Hero() {
       <div className="hero-vignette pointer-events-none absolute inset-0" />
 
       <div className="relative z-10 mt-[30vh] flex flex-col items-center md:mt-[34vh]">
-        <p className="eyebrow animate-in fade-in duration-700">Student &amp; founder tech club · India</p>
+        <p className="eyebrow animate-in fade-in duration-300">
+          Student &amp; founder tech club · India
+        </p>
         <h1 className="headline-xl mt-5 max-w-4xl">
-          <DecodeText>{homeStory.heroTitle}</DecodeText>
+          <DecodeText duration={450}>{homeStory.heroTitle}</DecodeText>
         </h1>
-        <p className="mt-6 max-w-xl text-lg text-muted-foreground md:text-xl animate-in fade-in duration-700 delay-500 fill-mode-both">
+        <p className="mt-6 max-w-xl text-lg text-muted-foreground md:text-xl animate-in fade-in duration-300 delay-100 fill-mode-both">
           {homeStory.heroIntro}
         </p>
-        <div className="mt-10 flex flex-wrap justify-center gap-3 animate-in fade-in duration-700 delay-700 fill-mode-both">
-          <Link to="/register" className="btn-silver">Register for HackX 1.0 <span className="arrow">→</span></Link>
-          <Link to="/contact" className="btn-ghost">Contact us</Link>
+        <div className="mt-10 flex flex-wrap justify-center gap-3 animate-in fade-in duration-300 delay-200 fill-mode-both">
+          <Link to="/register" className="btn-silver">
+            Register for HackX 1.0 <span className="arrow">→</span>
+          </Link>
+          <Link to="/contact" className="btn-ghost">
+            Contact us
+          </Link>
         </div>
       </div>
     </header>
