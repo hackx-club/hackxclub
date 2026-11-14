@@ -1,6 +1,21 @@
 // All editable site content lives here. Use [TO BE ANNOUNCED] for unknowns; don't invent facts.
 export const TBA = "[TO BE ANNOUNCED]";
 
+export const homeStory = {
+  heroTitle: "HackX. Big ideas start here.",
+  heroIntro: "Made by students, for students. Meet builders and founders, and take your idea into the real world.",
+  title: "We stopped waiting for the future. We started building it.",
+  chapters: [
+    { number: "01", title: "An idea. Nowhere to take it.", body: "Everyone tells students to get ready for the future. But having a big idea and finding a place to start are two different things." },
+    { number: "02", title: "So we made our own starting point.", body: "HackX brings student builders and founders into one room. A place to meet, try something, and build alongside people who get it." },
+    { number: "03", title: "Your idea is part of the next chapter.", body: "Bring it to HackX 1.0. Twelve hours to turn what if into something real." },
+  ],
+  pillarsTitle: "Meet. Make. Move forward.",
+  eventEyebrow: "The next chapter",
+  ctaTitle: "Your idea deserves a first day.",
+  ctaBody: "28 December 2026. Twelve hours. Start with HackX 1.0.",
+};
+
 export const registerOptions = [
   { value: "hackx-1-0", label: "HackX 1.0 · 28 Dec 2026" },
   { value: "general", label: "No specific event, keep me posted" },

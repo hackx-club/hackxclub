@@ -321,17 +321,12 @@
 @keyframes marquee { to { transform: translateX(-50%); } }
 
 [data-reveal] {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.8s cubic-bezier(.22,1,.36,1), transform 0.8s cubic-bezier(.22,1,.36,1);
+  transition: opacity 0.65s cubic-bezier(.22,1,.36,1), transform 0.65s cubic-bezier(.22,1,.36,1);
 }
+[data-reveal].reveal-pending { opacity: 0; transform: translateY(16px); }
 [data-reveal].is-in { opacity: 1; transform: none; }
 .arrow { display: inline-block; transition: transform 0.3s cubic-bezier(.22,1,.36,1); }
 a:hover .arrow { transform: translateX(4px); }
-
-/* page transition */
-main { animation: page-in 0.6s cubic-bezier(.22,1,.36,1); }
-@keyframes page-in { from { opacity: 0; transform: translateY(12px); } }
 
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] { opacity: 1; transform: none; transition: none; }
@@ -341,13 +336,24 @@ main { animation: page-in 0.6s cubic-bezier(.22,1,.36,1); }
   body { padding-bottom: 4.5rem; }
 }
 
-/* Page-change transition + headline line reveal */
-@keyframes page-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-@keyframes line-up { from { clip-path: inset(0 0 100% 0); transform: translateY(0.4em); } to { clip-path: inset(0 0 -10% 0); transform: none; } }
-.page-enter { animation: page-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+/* One opacity-only page entrance keeps sticky cards and the canvas stable. */
+@keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
+.page-enter { animation: page-in 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
 .page-enter h1 { animation: none; }
 .btn-silver, .btn-ghost { transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s, color 0.2s, border-color 0.2s; }
 @media (prefers-reduced-motion: reduce) { .page-enter, .page-enter h1 { animation: none; } }
+
+.story-chapters { margin-top: 3rem; }
+.story-chapter { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 24px; padding: 36px 0; border-top: 1px solid var(--border); }
+.story-number { color: var(--silver); font-size: 40px; font-weight: 600; line-height: 1; }
+@media (min-width: 768px) {
+  .story-chapter { grid-template-columns: 140px minmax(0, 1fr); padding: 48px 0; }
+  .story-number { font-size: 56px; }
+}
+@media (max-width: 767px) {
+  .story-chapter { grid-template-columns: 40px minmax(0, 1fr); gap: 16px; }
+  .story-number { font-size: 28px; }
+}
 
 .spotlight-card {
   position: relative;

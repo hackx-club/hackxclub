@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Hero } from "@/components/hero/Hero";
 import { CtaBanner, SectionHeading, SponsorMarquee } from "@/components/layout/SiteChrome";
-import { hackx1, numbers, pillars } from "@/content/site-content";
+import { hackx1, homeStory, numbers, pillars } from "@/content/site-content";
 import { pageHead } from "@/lib/seo";
 import { SpotlightCard } from "@/components/SpotlightCard";
 import { StackingCards } from "@/components/StackingCards";
@@ -22,15 +22,24 @@ function Index() {
     <main>
       <Hero />
 
-      <section className="mx-auto max-w-6xl px-6 py-28">
-        <SectionHeading eyebrow="Who we are" title="A club for people who would rather build than talk about it.">
-          HackX is a student and founder tech club in India. We bring builders into one room and give them a reason to ship.
-        </SectionHeading>
-        <Link to="/about" className="text-sm font-medium" data-reveal>Read our story <span className="arrow">→</span></Link>
+      <section className="home-story mx-auto max-w-6xl px-6 py-20 md:py-28" aria-label="The HackX story">
+        <SectionHeading eyebrow="Why we started" title={homeStory.title} />
+        <div className="story-chapters">
+          {homeStory.chapters.map((chapter) => (
+            <div key={chapter.number} className="story-chapter" data-reveal>
+              <span className="story-number" aria-hidden>{chapter.number}</span>
+              <div>
+                <h3 className="text-2xl font-semibold md:text-3xl">{chapter.title}</h3>
+                <p className="mt-4 max-w-xl text-lg text-muted-foreground">{chapter.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <Link to="/about" className="mt-10 inline-flex text-sm font-medium" data-reveal>Meet the people behind HackX <span className="arrow ml-2">→</span></Link>
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-20">
-        <SectionHeading eyebrow="What we do" title="Three ways we build together." />
+        <SectionHeading eyebrow="What we do" title={homeStory.pillarsTitle} />
         <StackingCards items={pillars.map((p) => ({ title: p.title, description: p.body }))} />
       </section>
 
@@ -49,7 +58,7 @@ function Index() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-20">
-        <SectionHeading eyebrow="Upcoming" title="HackX 1.0" />
+        <SectionHeading eyebrow={homeStory.eventEyebrow} title="HackX 1.0" />
         <Link to="/events/hackx-1-0" className="block">
           <SpotlightCard className="card-lift rounded-2xl p-8 md:p-12" data-reveal>
           <div className="grid gap-6 md:grid-cols-5">
@@ -67,7 +76,7 @@ function Index() {
         <SponsorMarquee />
       </section>
 
-      <CtaBanner title="Build with us on 28 December." body="12 hours, real products, people who care." />
+      <CtaBanner title={homeStory.ctaTitle} body={homeStory.ctaBody} />
     </main>
   );
 }

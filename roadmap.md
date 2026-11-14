@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Give Home a student-led story and add lightweight, accessible page and scroll transitions; desktop/mobile navigation and reduced motion verified.
 - [x] Add working Instagram hackx.club and clubhackx@gmail.com contact links; replace shared card spotlight with clipped, eased glass bubbles and verify desktop/mobile/reduced motion.
 - [x] Add and verify DecodeText on page and section headlines only, including stable layout, one-time playback and reduced motion.
 - [x] Add and verify sticky scroll stacks only for What we do and Mentors, including mobile and reduced motion.
