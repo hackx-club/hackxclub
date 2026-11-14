@@ -40,16 +40,27 @@ export function Motion() {
     // a data-seen attribute landing in the DOM before hydration completes
     // triggers a React hydration mismatch warning.
     const seen = new WeakSet<HTMLElement>();
-    const scan = () => {
-      document.querySelectorAll<HTMLElement>("[data-reveal], [data-count]").forEach((el) => {
-        if (seen.has(el)) return;
-        seen.add(el);
-        if (io) io.observe(el);
-        else el.classList.add("is-in");
-      });
+    const prepare = (el: HTMLElement) => {
+      if (seen.has(el)) return;
+      seen.add(el);
+      if (io && el.getBoundingClientRect().top >= window.innerHeight) {
+        el.classList.add("reveal-pending");
+        io.observe(el);
+      } else {
+        el.classList.add("is-in");
+        if (!reduce && el.dataset["count"]) countUp(el);
+      }
     };
-    scan();
-    const mo = new MutationObserver(scan);
+    const scan = (root: Element) => {
+      if (root instanceof HTMLElement && root.matches("[data-reveal], [data-count]")) prepare(root);
+      root.querySelectorAll<HTMLElement>("[data-reveal], [data-count]").forEach(prepare);
+    };
+    scan(document.body);
+    const mo = new MutationObserver((records) => {
+      records.forEach((record) => record.addedNodes.forEach((node) => {
+        if (node instanceof Element) scan(node);
+      }));
+    });
     mo.observe(document.body, { childList: true, subtree: true });
     return () => { mo.disconnect(); io?.disconnect(); };
   }, []);

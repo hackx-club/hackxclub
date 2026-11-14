@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { DecodeText } from "@/components/DecodeText";
+import { homeStory } from "@/content/site-content";
 
 // Start downloading the 3D X as soon as this module loads in the browser, not after hydration.
 const loadScene = () => import("./HeroScene");
@@ -39,10 +40,10 @@ export function Hero() {
       <div className="relative z-10 mt-[30vh] flex flex-col items-center md:mt-[34vh]">
         <p className="eyebrow animate-in fade-in duration-700">Student &amp; founder tech club · India</p>
         <h1 className="headline-xl mt-5 max-w-4xl">
-          <DecodeText>Where students build what's next.</DecodeText>
+          <DecodeText>{homeStory.heroTitle}</DecodeText>
         </h1>
         <p className="mt-6 max-w-xl text-lg text-muted-foreground md:text-xl animate-in fade-in duration-700 delay-500 fill-mode-both">
-          HackX brings student builders and founders together to ship real things.
+          {homeStory.heroIntro}
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3 animate-in fade-in duration-700 delay-700 fill-mode-both">
           <Link to="/register" className="btn-silver">Register for HackX 1.0 <span className="arrow">→</span></Link>
