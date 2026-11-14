@@ -2,12 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Card, CtaBanner, PageHeader, Section } from "@/components/layout/SiteChrome";
 import { StackingCards } from "@/components/StackingCards";
 import { mentors, pillars, team } from "@/content/site-content";
-import deekshana from "@/assets/deekshana.jpeg.asset.json";
-import rodick from "@/assets/rodick.jpeg.asset.json";
-import teamMember from "@/assets/team-member.png.asset.json";
-import santhosh from "@/assets/santhosh.jpeg.asset.json";
+import deekshana from "@/assets/deekshana.webp";
+import rodick from "@/assets/rodick.webp";
+import teamMember from "@/assets/dharun.webp";
+import santhosh from "@/assets/santhosh.webp";
+import lakshana from "@/assets/lakshana.webp";
+import sujith from "@/assets/sujith.webp";
+import jagankumar from "@/assets/jagankumar.webp";
 
-const photos: Record<string, string> = { deekshana: deekshana.url, rodick: rodick.url, member: teamMember.url, santhosh: santhosh.url };
+const photos: Record<string, string> = { deekshana, rodick, member: teamMember, santhosh, lakshana, sujith, jagankumar };
 import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/about")({
@@ -52,7 +55,7 @@ function AboutPage() {
           {team.map((m) => (
             <Card key={m.key}>
               {m.photo ? (
-                <div className="aspect-square w-full overflow-hidden rounded-lg"><img src={photos[m.photo]} alt={m.name} loading="lazy" className={"h-full w-full object-cover" + (m.key === 1 ? " object-[35%_50%]" : "")} /></div>
+                <div className="aspect-square w-full overflow-hidden rounded-lg"><img src={photos[m.photo]} alt={m.name} loading="lazy" decoding="async" width={800} height={800} className={"h-full w-full object-cover" + (m.key === 1 ? " object-[35%_50%]" : m.photo === "sujith" ? " object-[50%_38%]" : "")} /></div>
               ) : (
                 <div className="aspect-square rounded-lg bg-muted" />
               )}

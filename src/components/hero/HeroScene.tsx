@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 
-const SPIN = 0.18;
+const SPIN = 0.3;
 const TILT = 0.35;
 
 function palette(name: string) {
@@ -109,7 +109,7 @@ export default function HeroScene() {
       last = now;
       if (!visible || !onScreen) return;
       group.rotation.y += SPIN * dt;
-      group.rotation.x += (pointer.y * TILT - group.rotation.x) * (1 - Math.exp(-3 * dt));
+      group.rotation.x += (pointer.y * TILT - group.rotation.x) * (1 - Math.exp(-6 * dt));
       mouseLight.position.set(pointer.x * 4, pointer.y * 3, 3);
       renderer.render(scene, camera);
       if (!ready) { ready = true; host.setAttribute("data-scene-ready", "true"); }

@@ -74,8 +74,9 @@ export const hackx1 = {
 export const team = [
   { key: 1, name: "Dharun", role: "Founder", photo: "member" },
   { key: 2, name: "Santhosh", role: "Co-founder", photo: "santhosh" },
-  { key: 3, name: "Team member " + TBA, role: "Role " + TBA },
-  { key: 4, name: "Team member " + TBA, role: "Role " + TBA },
+  { key: 3, name: "Lakshana", role: "Social Media Management", photo: "lakshana" },
+  { key: 4, name: "Sujith", role: "Operations Coordinator", photo: "sujith" },
+  { key: 5, name: "Jagankumar", role: "Operations Coordinator", photo: "jagankumar" },
 ];
 
 export const mentors = [

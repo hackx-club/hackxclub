@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#/_";
 const DURATION = 800;
 
-export function DecodeText({ children }: { children: string }) {
+export function DecodeText({ children, duration = DURATION }: { children: string; duration?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const played = useRef(false);
 
@@ -25,7 +25,7 @@ export function DecodeText({ children }: { children: string }) {
     };
     const tick = (now: number) => {
       if (!started) started = now;
-      const progress = Math.min(1, (now - started) / DURATION);
+      const progress = Math.min(1, (now - started) / Math.max(1, duration));
       const locked = Math.floor(progress * glyphs.length);
       glyphs.forEach((glyph, index) => {
         const settled = index < locked;
@@ -47,7 +47,7 @@ export function DecodeText({ children }: { children: string }) {
     else observer.observe(host);
     motion.addEventListener("change", onMotionChange);
     return () => { observer.disconnect(); cancelAnimationFrame(frame); motion.removeEventListener("change", onMotionChange); };
-  }, [children]);
+  }, [children, duration]);
 
   return (
     <span ref={ref} className="decode-text" aria-label={children}>
