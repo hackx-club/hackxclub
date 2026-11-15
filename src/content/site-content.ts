@@ -107,8 +107,9 @@ export const team = [
   { key: 1, name: "Dharun", role: "Founder", photo: "member" },
   { key: 2, name: "Santhosh", role: "Co-founder", photo: "santhosh" },
   { key: 3, name: "Lakshana", role: "Social Media Management", photo: "lakshana" },
-  { key: 4, name: "Sujith", role: "Operations Coordinator", photo: "jagankumar" },
-  { key: 5, name: "Jagankumar", role: "Operations Coordinator", photo: "sujith" },
+  { key: 4, name: "Jagankumar", role: "Operations Coordinator", photo: "jagankumar" },
+  { key: 5, name: "Sujith", role: "Operations Coordinator", photo: "sujith" },
+  { key: 6, name: "Sriganth", role: "Social Media Management", photo: "sriganth" },
 ];
 
 export const mentors = [

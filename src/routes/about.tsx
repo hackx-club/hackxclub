@@ -9,6 +9,7 @@ import santhosh from "@/assets/santhosh.webp";
 import lakshana from "@/assets/lakshana.webp";
 import sujith from "@/assets/sujith.webp";
 import jagankumar from "@/assets/jagankumar.webp";
+import sriganth from "@/assets/sriganth.webp";
 
 const photos: Record<string, string> = {
   deekshana,
@@ -18,6 +19,7 @@ const photos: Record<string, string> = {
   lakshana,
   sujith,
   jagankumar,
+  sriganth,
 };
 import { pageHead } from "@/lib/seo";
 
