@@ -16,7 +16,7 @@ export const Route = createFileRoute("/register")({
 
 export const registrationSchema = z.object({
   name: z.string().trim().min(1, "Enter your name").max(100),
-  college: z.string().trim().min(1, "Enter your college").max(150),
+  college: z.string().trim().min(1, "Enter your school or college").max(150),
   phone: z.string().trim().regex(/^[0-9+ ]{8,16}$/, "Enter a valid phone number"),
   email: z.string().trim().email("Enter a valid email").max(255),
   team_size: z.coerce.number().int().min(1).max(4),
@@ -73,7 +73,7 @@ function RegisterPage() {
                 ))}
               </div>
             </fieldset>
-            {[["name", "Name", "text"], ["college", "College", "text"], ["phone", "Phone", "tel"], ["email", "Email", "email"]].map(([n, l, t]) => (
+            {[["name", "Name", "text"], ["college", "School or college", "text"], ["phone", "Phone", "tel"], ["email", "Email", "email"]].map(([n, l, t]) => (
               <label key={n} className="grid gap-1.5 text-sm">
                 {l}
                 <input name={n} type={t} className={field} maxLength={n === "college" ? 150 : n === "email" ? 255 : 100} />
