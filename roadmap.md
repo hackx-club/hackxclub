@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Swap Sujith and Jagankumar's displayed names again and add Sriganth with a locally packaged, compressed portrait.
+- [x] Swap Sujith and Jagankumar's displayed names again and add Sriganth with a locally packaged, compressed portrait.
 
 - [x] Speed up Home headline, entrances, X spin and pointer response without changing the logo.
 - [x] Add Lakshana (social media management), Sujith and Jagankumar (operations coordinators); compress and bundle every portrait locally.
