@@ -10,7 +10,13 @@ import { SpotlightCard } from "@/components/SpotlightCard";
 
 export const Route = createFileRoute("/contact")({
   staticData: { sitemap: true },
-  head: () => pageHead("/contact", "Contact HackX", "Reach HackX on WhatsApp, email, Instagram or LinkedIn, or send a short message.", { crumb: "Contact" }),
+  head: () =>
+    pageHead(
+      "/contact",
+      "Contact HackX",
+      "Reach HackX on WhatsApp, email, Instagram or LinkedIn, or send a short message.",
+      { crumb: "Contact" },
+    ),
   component: ContactPage,
 });
 
@@ -19,7 +25,8 @@ const schema = z.object({
   email: z.string().trim().email("Enter a valid email").max(255),
   message: z.string().trim().min(1, "Write a message").max(1000),
 });
-const field = "w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground outline-none focus:border-ring";
+const field =
+  "w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground outline-none focus:border-ring";
 
 function ContactPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -27,7 +34,8 @@ function ContactPage() {
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const p = schema.safeParse(Object.fromEntries(new FormData(e.currentTarget)));
-    if (!p.success) return setErrors(Object.fromEntries(p.error.issues.map((i) => [i.path[0], i.message])));
+    if (!p.success)
+      return setErrors(Object.fromEntries(p.error.issues.map((i) => [i.path[0], i.message])));
     setErrors({});
     setStatus("saving");
     const { error } = await supabase.from("contact_messages").insert(p.data);
@@ -46,12 +54,21 @@ function ContactPage() {
       <Section>
         <div className="grid gap-10 md:grid-cols-2">
           <div className="grid content-start gap-3">
-            <Link to="/register" className="btn-silver justify-center">Register for an event <span className="arrow">→</span></Link>
+            <Link to="/register" className="btn-silver justify-center">
+              Register for an event <span className="arrow">→</span>
+            </Link>
             {channels.map(([k, v, href]) => (
               <Card key={k}>
                 <p className="eyebrow">{k}</p>
                 {href ? (
-                  <a href={href} target="_blank" rel="noopener noreferrer" className="mt-2 block text-xl font-semibold">{v} <span className="arrow">→</span></a>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 block text-xl font-semibold"
+                  >
+                    {v} <span className="arrow">→</span>
+                  </a>
                 ) : (
                   <p className="mt-2 text-xl font-semibold">{v}</p>
                 )}
@@ -68,7 +85,12 @@ function ContactPage() {
               {(["name", "email"] as const).map((n) => (
                 <label key={n} className="grid gap-1.5 text-sm capitalize">
                   {n}
-                  <input name={n} type={n === "email" ? "email" : "text"} maxLength={n === "email" ? 255 : 100} className={field} />
+                  <input
+                    name={n}
+                    type={n === "email" ? "email" : "text"}
+                    maxLength={n === "email" ? 255 : 100}
+                    className={field}
+                  />
                   {errors[n] && <span className="normal-case text-destructive">{errors[n]}</span>}
                 </label>
               ))}
@@ -77,8 +99,14 @@ function ContactPage() {
                 <textarea name="message" rows={5} maxLength={1000} className={field} />
                 {errors["message"] && <span className="text-destructive">{errors["message"]}</span>}
               </label>
-              {status === "error" && <p className="text-sm text-destructive">Couldn't send. Try WhatsApp instead.</p>}
-              <button type="submit" disabled={status === "saving"} className="btn-silver justify-center">
+              {status === "error" && (
+                <p className="text-sm text-destructive">Couldn't send. Try WhatsApp instead.</p>
+              )}
+              <button
+                type="submit"
+                disabled={status === "saving"}
+                className="btn-silver justify-center"
+              >
                 {status === "saving" ? "Sending…" : "Send message"}
               </button>
             </form>

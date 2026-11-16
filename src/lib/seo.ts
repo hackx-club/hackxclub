@@ -2,7 +2,12 @@ import { site } from "@/config/site";
 
 type Opts = { type?: string; crumb?: string; jsonLd?: object[] };
 
-export function pageHead(path: string, title: string, description: string, opts: Opts | string = {}) {
+export function pageHead(
+  path: string,
+  title: string,
+  description: string,
+  opts: Opts | string = {},
+) {
   const o: Opts = typeof opts === "string" ? { type: opts } : opts;
   const url = `${site.url}${path === "/" ? "" : path}`;
   const ld = [...(o.jsonLd ?? [])];
@@ -16,7 +21,10 @@ export function pageHead(path: string, title: string, description: string, opts:
         ...parts.map((_, i) => ({
           "@type": "ListItem",
           position: i + 2,
-          name: i === parts.length - 1 ? (o.crumb ?? title) : (parts[i] ?? "").replace(/^\w/, (c) => c.toUpperCase()),
+          name:
+            i === parts.length - 1
+              ? (o.crumb ?? title)
+              : (parts[i] ?? "").replace(/^\w/, (c) => c.toUpperCase()),
           item: `${site.url}/${parts.slice(0, i + 1).join("/")}`,
         })),
       ],

@@ -19,7 +19,10 @@ export function Logo() {
         <circle cx="14" cy="15" r="5" fill="var(--logo-blue)" />
       </svg>
       <span className="text-xl font-medium tracking-tight">
-        Hack<span className="font-bold" style={{ color: "var(--logo-blue)" }}>X</span>
+        Hack
+        <span className="font-bold" style={{ color: "var(--logo-blue)" }}>
+          X
+        </span>
       </span>
     </Link>
   );
@@ -49,7 +52,9 @@ export function SiteNav() {
               {n.label}
             </Link>
           ))}
-          <Link to="/register" className="btn-silver btn-sm">Register</Link>
+          <Link to="/register" className="btn-silver btn-sm">
+            Register
+          </Link>
         </div>
         <button
           className="text-sm md:hidden"
@@ -63,11 +68,22 @@ export function SiteNav() {
       {open && (
         <div className="flex flex-col gap-4 border-t border-border px-6 py-5 md:hidden">
           {nav.map((n) => (
-            <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="text-muted-foreground">
+            <Link
+              key={n.to}
+              to={n.to}
+              onClick={() => setOpen(false)}
+              className="text-muted-foreground"
+            >
               {n.label}
             </Link>
           ))}
-          <Link to="/register" onClick={() => setOpen(false)} className="btn-silver btn-sm self-start">Register</Link>
+          <Link
+            to="/register"
+            onClick={() => setOpen(false)}
+            className="btn-silver btn-sm self-start"
+          >
+            Register
+          </Link>
         </div>
       )}
     </nav>
@@ -94,9 +110,15 @@ export function SiteFooter() {
         </div>
         <div className="flex flex-col gap-2 text-sm">
           <p className="eyebrow mb-2">Legal</p>
-          <Link to="/register" className="text-muted-foreground hover:text-foreground">Register</Link>
-          <Link to="/privacy" className="text-muted-foreground hover:text-foreground">Privacy</Link>
-          <Link to="/terms" className="text-muted-foreground hover:text-foreground">Terms</Link>
+          <Link to="/register" className="text-muted-foreground hover:text-foreground">
+            Register
+          </Link>
+          <Link to="/privacy" className="text-muted-foreground hover:text-foreground">
+            Privacy
+          </Link>
+          <Link to="/terms" className="text-muted-foreground hover:text-foreground">
+            Terms
+          </Link>
         </div>
       </div>
       <p className="border-t border-border py-6 text-center text-xs text-muted-foreground">
@@ -122,11 +144,21 @@ export function WhatsAppFab() {
   );
 }
 
-export function PageHeader({ eyebrow, title, intro }: { eyebrow: string; title: string; intro?: ReactNode }) {
+export function PageHeader({
+  eyebrow,
+  title,
+  intro,
+}: {
+  eyebrow: string;
+  title: string;
+  intro?: ReactNode;
+}) {
   return (
     <header className="mx-auto max-w-6xl px-6 pb-12 pt-20 md:pt-28" data-reveal>
       <p className="eyebrow">{eyebrow}</p>
-      <h1 className="headline-xl mt-4"><DecodeText>{title}</DecodeText></h1>
+      <h1 className="headline-xl mt-4">
+        <DecodeText>{title}</DecodeText>
+      </h1>
       {intro && <p className="mt-6 max-w-2xl text-lg text-muted-foreground">{intro}</p>}
     </header>
   );
@@ -142,19 +174,40 @@ export function Section({ title, children }: { title?: string; children: ReactNo
 }
 
 export function Card({ children }: { children: ReactNode }) {
-  return <SpotlightCard className="card-lift rounded-xl p-6" data-reveal>{children}</SpotlightCard>;
+  return (
+    <SpotlightCard className="card-lift rounded-xl p-6" data-reveal>
+      {children}
+    </SpotlightCard>
+  );
 }
 
 export function MobileBar() {
   return (
     <div className="mobile-bar md:hidden">
-      <Link to="/register" className="btn-silver btn-sm flex-1 justify-center">Register</Link>
-      <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="btn-ghost flex-1 justify-center">WhatsApp</a>
+      <Link to="/register" className="btn-silver btn-sm flex-1 justify-center">
+        Register
+      </Link>
+      <a
+        href={whatsappUrl()}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn-ghost flex-1 justify-center"
+      >
+        WhatsApp
+      </a>
     </div>
   );
 }
 
-export function SectionHeading({ eyebrow, title, children }: { eyebrow?: string; title: string; children?: ReactNode }) {
+export function SectionHeading({
+  eyebrow,
+  title,
+  children,
+}: {
+  eyebrow?: string;
+  title: string;
+  children?: ReactNode;
+}) {
   return (
     <div className="mb-10 max-w-3xl" data-reveal>
       {eyebrow && <p className="eyebrow">{eyebrow}</p>}
@@ -170,8 +223,12 @@ export function CtaBanner({ title, body }: { title: string; body?: string }) {
       <h2 className="headline-lg mx-auto max-w-3xl">{title}</h2>
       {body && <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">{body}</p>}
       <div className="mt-10 flex flex-wrap justify-center gap-3">
-        <Link to="/register" className="btn-silver">Register for HackX 1.0 <span className="arrow">→</span></Link>
-        <Link to="/contact" className="btn-ghost">Contact us</Link>
+        <Link to="/register" className="btn-silver">
+          Register for HackX 1.0 <span className="arrow">→</span>
+        </Link>
+        <Link to="/contact" className="btn-ghost">
+          Contact us
+        </Link>
       </div>
     </section>
   );
@@ -183,7 +240,9 @@ export function SponsorMarquee() {
     <div className="marquee" aria-label="Sponsor slots, to be announced">
       <div className="marquee-track">
         {[...slots, ...slots].map((i, k) => (
-          <SpotlightCard key={k} className="sponsor-slot" aria-hidden={k >= slots.length}>Sponsor [TBA]</SpotlightCard>
+          <SpotlightCard key={k} className="sponsor-slot" aria-hidden={k >= slots.length}>
+            Sponsor [TBA]
+          </SpotlightCard>
         ))}
       </div>
     </div>

@@ -1,5 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Card, CtaBanner, PageHeader, Section, SponsorMarquee } from "@/components/layout/SiteChrome";
+import {
+  Card,
+  CtaBanner,
+  PageHeader,
+  Section,
+  SponsorMarquee,
+} from "@/components/layout/SiteChrome";
 import { hackx1 as e } from "@/content/site-content";
 import { TracksSection } from "@/components/TracksSection";
 import { site } from "@/config/site";
@@ -31,7 +37,11 @@ export const Route = createFileRoute("/events/hackx-1-0")({
           {
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            mainEntity: e.faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+            mainEntity: e.faq.map(([q, a]) => ({
+              "@type": "Question",
+              name: q,
+              acceptedAnswer: { "@type": "Answer", text: a },
+            })),
           },
         ],
       },
@@ -45,28 +55,52 @@ function EventPage() {
       <PageHeader eyebrow={e.date} title={e.name} intro="12 hours to build something real." />
       <Section>
         <div className="grid gap-4 md:grid-cols-5">
-          {[["Date", e.date], ["Duration", e.duration], ["Prize pool", e.prize], ["Food", "Included"], ["Venue", e.venue]].map(([k, v]) => (
-            <Card key={k}><p className="eyebrow">{k}</p><p className="mt-2 text-lg font-semibold">{v}</p></Card>
+          {[
+            ["Date", e.date],
+            ["Duration", e.duration],
+            ["Prize pool", e.prize],
+            ["Food", "Included"],
+            ["Venue", e.venue],
+          ].map(([k, v]) => (
+            <Card key={k}>
+              <p className="eyebrow">{k}</p>
+              <p className="mt-2 text-lg font-semibold">{v}</p>
+            </Card>
           ))}
         </div>
-        <Link to="/register" className="btn-silver mt-10">Register <span className="arrow">→</span></Link>
+        <Link to="/register" className="btn-silver mt-10">
+          Register <span className="arrow">→</span>
+        </Link>
       </Section>
       <Section title="Schedule">
         <ol className="divide-y divide-border rounded-xl border border-border" data-reveal>
           {e.schedule.map(([t, x]) => (
-            <li key={t} className="flex gap-6 px-6 py-4"><span className="w-20 text-muted-foreground">{t}</span><span>{x}</span></li>
+            <li key={t} className="flex gap-6 px-6 py-4">
+              <span className="w-20 text-muted-foreground">{t}</span>
+              <span>{x}</span>
+            </li>
           ))}
         </ol>
       </Section>
       <TracksSection />
       <Section title="Prizes & food">
         <div className="grid gap-4 md:grid-cols-3">
-          {e.prizes.map((p) => <Card key={p}><p className="font-medium">{p}</p></Card>)}
-          <Card><p className="font-medium">Food included for all participants</p></Card>
+          {e.prizes.map((p) => (
+            <Card key={p}>
+              <p className="font-medium">{p}</p>
+            </Card>
+          ))}
+          <Card>
+            <p className="font-medium">Food included for all participants</p>
+          </Card>
         </div>
       </Section>
       <Section title="Rules">
-        <ul className="space-y-2 text-muted-foreground" data-reveal>{e.rules.map((r) => <li key={r}>· {r}</li>)}</ul>
+        <ul className="space-y-2 text-muted-foreground" data-reveal>
+          {e.rules.map((r) => (
+            <li key={r}>· {r}</li>
+          ))}
+        </ul>
       </Section>
       <Section title="FAQ">
         <div className="space-y-3">
@@ -79,7 +113,9 @@ function EventPage() {
         </div>
       </Section>
       <section className="py-12">
-        <div className="mx-auto max-w-6xl px-6"><h2 className="mb-6 text-2xl font-semibold tracking-tight md:text-3xl">Sponsors</h2></div>
+        <div className="mx-auto max-w-6xl px-6">
+          <h2 className="mb-6 text-2xl font-semibold tracking-tight md:text-3xl">Sponsors</h2>
+        </div>
         <SponsorMarquee />
       </section>
       <CtaBanner title="Save your spot." />

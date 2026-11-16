@@ -27,13 +27,14 @@ export function Motion() {
     const io = reduce
       ? null
       : new IntersectionObserver(
-          (entries) => entries.forEach((en) => {
-            if (!en.isIntersecting) return;
-            const el = en.target as HTMLElement;
-            el.classList.add("is-in");
-            if (el.dataset["count"]) countUp(el);
-            io?.unobserve(el);
-          }),
+          (entries) =>
+            entries.forEach((en) => {
+              if (!en.isIntersecting) return;
+              const el = en.target as HTMLElement;
+              el.classList.add("is-in");
+              if (el.dataset["count"]) countUp(el);
+              io?.unobserve(el);
+            }),
           { threshold: 0.1 },
         );
     // Track processed elements in a WeakSet instead of a DOM attribute:
@@ -57,12 +58,17 @@ export function Motion() {
     };
     scan(document.body);
     const mo = new MutationObserver((records) => {
-      records.forEach((record) => record.addedNodes.forEach((node) => {
-        if (node instanceof Element) scan(node);
-      }));
+      records.forEach((record) =>
+        record.addedNodes.forEach((node) => {
+          if (node instanceof Element) scan(node);
+        }),
+      );
     });
     mo.observe(document.body, { childList: true, subtree: true });
-    return () => { mo.disconnect(); io?.disconnect(); };
+    return () => {
+      mo.disconnect();
+      io?.disconnect();
+    };
   }, []);
 
   return <div id="scroll-progress" className="scroll-progress" aria-hidden />;
@@ -71,7 +77,8 @@ export function Motion() {
 function countUp(el: HTMLElement) {
   const target = Number(el.dataset["count"]);
   const start = performance.now();
-  const fmt = (n: number) => `${el.dataset["prefix"] ?? ""}${Math.round(n).toLocaleString("en-IN")}${el.dataset["suffix"] ?? ""}`;
+  const fmt = (n: number) =>
+    `${el.dataset["prefix"] ?? ""}${Math.round(n).toLocaleString("en-IN")}${el.dataset["suffix"] ?? ""}`;
   const step = (t: number) => {
     const p = Math.min((t - start) / 800, 1);
     el.textContent = fmt(target * (1 - Math.pow(1 - p, 3)));

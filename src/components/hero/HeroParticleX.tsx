@@ -7,7 +7,11 @@ const TILT_RESPONSE = 5;
 const POINTER_TILT = 0.42;
 
 function StaticX() {
-  return <div aria-hidden className="hero-poster"><span className="hero-poster-x">X</span></div>;
+  return (
+    <div aria-hidden className="hero-poster">
+      <span className="hero-poster-x">X</span>
+    </div>
+  );
 }
 
 // Read the same semantic palette as the static chrome fallback.
@@ -19,7 +23,12 @@ function tokenColor(name: string) {
   ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   ctx.fillRect(0, 0, 1, 1);
   const pixel = ctx.getImageData(0, 0, 1, 1).data;
-  return new THREE.Color().setRGB((pixel[0] ?? 0) / 255, (pixel[1] ?? 0) / 255, (pixel[2] ?? 0) / 255, THREE.SRGBColorSpace);
+  return new THREE.Color().setRGB(
+    (pixel[0] ?? 0) / 255,
+    (pixel[1] ?? 0) / 255,
+    (pixel[2] ?? 0) / 255,
+    THREE.SRGBColorSpace,
+  );
 }
 
 function sampleGlyph(size: number, cap: number) {
@@ -34,7 +43,12 @@ function sampleGlyph(size: number, cap: number) {
   ctx.textBaseline = "middle";
   ctx.fillText("X", dim / 2, dim / 2);
   const data = ctx.getImageData(0, 0, dim, dim).data;
-  const inside = (x: number, y: number) => x >= 0 && y >= 0 && x < dim && y < dim && (data[(Math.floor(y) * dim + Math.floor(x)) * 4 + 3] ?? 0) > 128;
+  const inside = (x: number, y: number) =>
+    x >= 0 &&
+    y >= 0 &&
+    x < dim &&
+    y < dim &&
+    (data[(Math.floor(y) * dim + Math.floor(x)) * 4 + 3] ?? 0) > 128;
   const step = Math.max(1.7, size / (cap === MOBILE_CAP ? 105 : 150));
   const depth = size * 0.14;
   const bevel = size * 0.035;
@@ -58,7 +72,13 @@ function sampleGlyph(size: number, cap: number) {
       const jitterY = y + (Math.random() - 0.5) * step * 0.55;
       add(jitterX, jitterY, depth / 2 - (edge ? bevel * 0.35 : 0), nx * 0.8, ny * 0.8, 1);
       add(jitterX, jitterY, -depth / 2, nx * 0.5, ny * 0.5, -1);
-      if (edge && (!inside(x + step, y) || !inside(x - step, y) || !inside(x, y + step) || !inside(x, y - step))) {
+      if (
+        edge &&
+        (!inside(x + step, y) ||
+          !inside(x - step, y) ||
+          !inside(x, y + step) ||
+          !inside(x, y - step))
+      ) {
         for (let z = -depth / 2; z < depth / 2; z += step) add(jitterX, jitterY, z, nx, ny, 0);
       }
     }
@@ -125,13 +145,21 @@ export default function HeroParticleX() {
   const [fallback, setFallback] = useState(false);
   useEffect(() => {
     const host = hostRef.current;
-    if (!host || window.matchMedia("(prefers-reduced-motion: reduce)").matches || (navigator.hardwareConcurrency ?? 8) <= 2) {
+    if (
+      !host ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      (navigator.hardwareConcurrency ?? 8) <= 2
+    ) {
       setFallback(true);
       return;
     }
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "low-power" });
+      renderer = new THREE.WebGLRenderer({
+        alpha: true,
+        antialias: true,
+        powerPreference: "low-power",
+      });
     } catch {
       setFallback(true);
       return;
@@ -147,11 +175,18 @@ export default function HeroParticleX() {
     const group = new THREE.Group();
     scene.add(group);
     const material = new THREE.ShaderMaterial({
-      vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: true,
+      vertexShader: VERT,
+      fragmentShader: FRAG,
+      transparent: true,
+      depthWrite: true,
       uniforms: {
-        uTime: { value: 0 }, uSize: { value: 3 }, uRadius: { value: 80 },
-        uPointer: { value: new THREE.Vector2() }, uActive: { value: 0 },
-        uMetal: { value: tokenColor("--hero-metal") }, uSilver: { value: tokenColor("--silver-light") },
+        uTime: { value: 0 },
+        uSize: { value: 3 },
+        uRadius: { value: 80 },
+        uPointer: { value: new THREE.Vector2() },
+        uActive: { value: 0 },
+        uMetal: { value: tokenColor("--hero-metal") },
+        uSilver: { value: tokenColor("--silver-light") },
         uLight: { value: new THREE.Vector3(-0.6, 0.8, 1) },
       },
     });
@@ -178,7 +213,10 @@ export default function HeroParticleX() {
       camera.updateProjectionMatrix();
       const size = Math.min(height * 0.4, width * 0.62);
       const sampled = sampleGlyph(size, width < 768 ? MOBILE_CAP : DESKTOP_CAP);
-      if (!sampled) { setFallback(true); return; }
+      if (!sampled) {
+        setFallback(true);
+        return;
+      }
       if (points) group.remove(points);
       geometry?.dispose();
       geometry = new THREE.BufferGeometry();
@@ -190,20 +228,35 @@ export default function HeroParticleX() {
       group.add(points);
       group.position.y = height * 0.23;
       const sizeUniform = material.uniforms["uSize"];
-      if (sizeUniform) sizeUniform.value = sampled.step * 1.1 * renderer.getPixelRatio() * camera.position.z / 1000;
+      if (sizeUniform)
+        sizeUniform.value =
+          (sampled.step * 1.1 * renderer.getPixelRatio() * camera.position.z) / 1000;
       const radiusUniform = material.uniforms["uRadius"];
       if (radiusUniform) radiusUniform.value = size * 0.35;
     };
-    const onResize = () => { window.clearTimeout(resizeTimer); resizeTimer = window.setTimeout(resize, 150); };
+    const onResize = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(resize, 150);
+    };
     const onMove = (event: PointerEvent) => {
       const rect = host.getBoundingClientRect();
-      pointer.x = (event.clientX - rect.left) / width * 2 - 1;
-      pointer.y = (event.clientY - rect.top) / height * 2 - 1;
-      pointer.active = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+      pointer.x = ((event.clientX - rect.left) / width) * 2 - 1;
+      pointer.y = ((event.clientY - rect.top) / height) * 2 - 1;
+      pointer.active =
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom;
     };
-    const onLeave = () => { pointer.active = false; };
-    const onVisibility = () => { visible = document.visibilityState === "visible"; };
-    const observer = new IntersectionObserver(([entry]) => { onScreen = entry?.isIntersecting ?? true; });
+    const onLeave = () => {
+      pointer.active = false;
+    };
+    const onVisibility = () => {
+      visible = document.visibilityState === "visible";
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      onScreen = entry?.isIntersecting ?? true;
+    });
     observer.observe(host);
     const tick = (now: number) => {
       raf = requestAnimationFrame(tick);
@@ -212,31 +265,45 @@ export default function HeroParticleX() {
       if (!visible || !onScreen) return;
       elapsed += dt;
       const blend = 1 - Math.exp(-TILT_RESPONSE * dt);
-      const targetY = -0.3 + (pointer.active ? pointer.x * POINTER_TILT : Math.sin(elapsed * 0.35) * 0.1);
+      const targetY =
+        -0.3 + (pointer.active ? pointer.x * POINTER_TILT : Math.sin(elapsed * 0.35) * 0.1);
       const targetX = 0.12 + (pointer.active ? pointer.y * 0.22 : Math.cos(elapsed * 0.3) * 0.045);
       group.rotation.y += (targetY - group.rotation.y) * blend;
       group.rotation.x += (targetX - group.rotation.x) * blend;
       const timeUniform = material.uniforms["uTime"];
       if (timeUniform) timeUniform.value = elapsed;
       const activeUniform = material.uniforms["uActive"];
-      if (activeUniform) activeUniform.value += ((pointer.active ? 1 : 0) - activeUniform.value) * blend;
-      material.uniforms["uPointer"]?.value.set(pointer.x * width / 2, -pointer.y * height / 2 - group.position.y);
+      if (activeUniform)
+        activeUniform.value += ((pointer.active ? 1 : 0) - activeUniform.value) * blend;
+      material.uniforms["uPointer"]?.value.set(
+        (pointer.x * width) / 2,
+        (-pointer.y * height) / 2 - group.position.y,
+      );
       material.uniforms["uLight"]?.value.set(-0.6 + pointer.x * 0.8, 0.8 - pointer.y * 0.5, 1);
       renderer.render(scene, camera);
-      if (!ready && points) { ready = true; host.setAttribute("data-scene-ready", "true"); }
+      if (!ready && points) {
+        ready = true;
+        host.setAttribute("data-scene-ready", "true");
+      }
     };
     group.rotation.set(0.12, -0.3, -0.035);
-    document.fonts.load('800 100px "Inter Tight"').catch(() => undefined).then(() => {
-      if (cancelled) return;
-      resize();
-      window.addEventListener("resize", onResize);
-      window.addEventListener("pointermove", onMove, { passive: true });
-      window.addEventListener("pointerdown", onMove, { passive: true });
-      document.documentElement.addEventListener("pointerleave", onLeave);
-      document.addEventListener("visibilitychange", onVisibility);
-      raf = requestAnimationFrame(tick);
-    });
-    const onContextLost = (event: Event) => { event.preventDefault(); setFallback(true); };
+    document.fonts
+      .load('800 100px "Inter Tight"')
+      .catch(() => undefined)
+      .then(() => {
+        if (cancelled) return;
+        resize();
+        window.addEventListener("resize", onResize);
+        window.addEventListener("pointermove", onMove, { passive: true });
+        window.addEventListener("pointerdown", onMove, { passive: true });
+        document.documentElement.addEventListener("pointerleave", onLeave);
+        document.addEventListener("visibilitychange", onVisibility);
+        raf = requestAnimationFrame(tick);
+      });
+    const onContextLost = (event: Event) => {
+      event.preventDefault();
+      setFallback(true);
+    };
     canvas.addEventListener("webglcontextlost", onContextLost);
     return () => {
       cancelled = true;
@@ -256,5 +323,12 @@ export default function HeroParticleX() {
     };
   }, []);
   if (fallback) return <StaticX />;
-  return <div ref={hostRef} role="img" aria-label="Dark metallic three-dimensional particle X" className="pointer-events-none absolute inset-0" />;
+  return (
+    <div
+      ref={hostRef}
+      role="img"
+      aria-label="Dark metallic three-dimensional particle X"
+      className="pointer-events-none absolute inset-0"
+    />
+  );
 }
