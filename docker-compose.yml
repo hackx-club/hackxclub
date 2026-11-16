@@ -1,4 +1,55 @@
 services:
+  # ----------------------------------------------------------------------------
+  # Caddy Reverse Proxy (Automatic HTTPS, SSL certificates, and HTTP/3)
+  # ----------------------------------------------------------------------------
+  caddy:
+    image: caddy:2-alpine
+    container_name: hackx-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3 QUIC support
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+      ACME_EMAIL: ${ACME_EMAIL:-admin@hackx.club}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data # Holds TLS certificates across container restarts
+      - caddy_config:/config
+    depends_on:
+      - app
+
+  # ----------------------------------------------------------------------------
+  # Web Application (TanStack Start / Nitro node-server)
+  # ----------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-https://dummy.supabase.co}
+        VITE_SUPABASE_PUBLISHABLE_KEY: ${VITE_SUPABASE_PUBLISHABLE_KEY:-dummy_key}
+        VITE_SUPABASE_PROJECT_ID: ${VITE_SUPABASE_PROJECT_ID:-dummy_id}
+    container_name: hackx-app
+    restart: unless-stopped
+    expose:
+      - "3000" # Expose internally to Caddy; not directly to the public internet
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-hackxclub}
+      VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-https://dummy.supabase.co}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${VITE_SUPABASE_PUBLISHABLE_KEY:-dummy_key}
+      VITE_SUPABASE_PROJECT_ID: ${VITE_SUPABASE_PROJECT_ID:-dummy_id}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ----------------------------------------------------------------------------
+  # PostgreSQL Database (Local persistent storage on SSD volume)
+  # ----------------------------------------------------------------------------
   postgres:
     image: postgres:16-alpine
     container_name: hackx-postgres
@@ -8,7 +59,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-hackxclub}
     ports:
-      - "5432:5432"
+      # Bind to localhost only so the database is never exposed to the public internet
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -17,23 +69,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # Optional local app container testing
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: hackx-app
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      HOST: 0.0.0.0
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-hackxclub}
-    depends_on:
-      postgres:
-        condition: service_healthy
-
 volumes:
   postgres_data:
+  caddy_data:
+  caddy_config:
