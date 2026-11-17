@@ -19,6 +19,13 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as EventsHackx10RouteImport } from './routes/events.hackx-1-0'
+import { Route as AdminRouteImport } from './routes/admin'
+
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -73,6 +80,7 @@ const EventsHackx10Route = EventsHackx10RouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/partner': typeof PartnerRoute
@@ -85,6 +93,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/partner': typeof PartnerRoute
@@ -98,6 +107,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/partner': typeof PartnerRoute
@@ -112,6 +122,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/about'
     | '/contact'
     | '/partner'
@@ -124,6 +135,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/about'
     | '/contact'
     | '/partner'
@@ -136,6 +148,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/about'
     | '/contact'
     | '/partner'
@@ -149,6 +162,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
   PartnerRoute: typeof PartnerRoute
@@ -167,6 +181,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -237,6 +258,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
   PartnerRoute: PartnerRoute,
