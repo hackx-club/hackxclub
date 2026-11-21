@@ -1,14 +1,21 @@
 import { site } from "@/config/site";
 
-type Opts = { type?: string; crumb?: string; jsonLd?: object[] };
+export type SeoOpts = {
+  type?: string;
+  crumb?: string;
+  jsonLd?: object[];
+  keywords?: string;
+  image?: string;
+  robots?: string;
+};
 
 export function pageHead(
   path: string,
   title: string,
   description: string,
-  opts: Opts | string = {},
+  opts: SeoOpts | string = {},
 ) {
-  const o: Opts = typeof opts === "string" ? { type: opts } : opts;
+  const o: SeoOpts = typeof opts === "string" ? { type: opts } : opts;
   const url = `${site.url}${path === "/" ? "" : path}`;
   const ld = [...(o.jsonLd ?? [])];
   if (path !== "/") {
@@ -30,18 +37,32 @@ export function pageHead(
       ],
     });
   }
+
+  const defaultImage = `${site.url}/og-image.png`;
+  const shareImage = o.image ?? defaultImage;
+
   return {
     meta: [
       { title },
       { name: "description", content: description },
+      ...(o.keywords ? [{ name: "keywords", content: o.keywords }] : []),
+      {
+        name: "robots",
+        content:
+          o.robots ??
+          "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: o.type ?? "website" },
       { property: "og:url", content: url },
       { property: "og:site_name", content: site.name },
+      { property: "og:locale", content: "en_IN" },
+      { property: "og:image", content: shareImage },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
+      { name: "twitter:image", content: shareImage },
     ],
     links: [{ rel: "canonical", href: url }],
     scripts: ld.map((d) => ({ type: "application/ld+json", children: JSON.stringify(d) })),
