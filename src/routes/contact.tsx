@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { useState, type FormEvent } from "react";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
 import { Card, PageHeader, Section } from "@/components/layout/SiteChrome";
 import { whatsappUrl, PHONE_DISPLAY } from "@/config/site";
 import { socials } from "@/content/site-content";
@@ -20,11 +20,56 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
-const schema = z.object({
+export const schema = z.object({
   name: z.string().trim().min(1, "Enter your name").max(100),
   email: z.string().trim().email("Enter a valid email").max(255),
   message: z.string().trim().min(1, "Write a message").max(1000),
 });
+
+export const submitContactMessageServerFn = createServerFn({ method: "POST" })
+  .validator((d: z.infer<typeof schema>) => d)
+  .handler(async ({ data }) => {
+    let saved = false;
+
+    // 1. Try local/direct Postgres first
+    const dbUrl = process.env["DATABASE_URL"] || process.env["LOVABLE_DB_MIGRATION_URL"];
+    if (dbUrl) {
+      try {
+        const postgres = (await import("postgres")).default;
+        const isLocal =
+          dbUrl.includes("localhost") ||
+          dbUrl.includes("127.0.0.1") ||
+          dbUrl.includes("@postgres:");
+        const sql = postgres(dbUrl, {
+          max: 1,
+          idle_timeout: 5,
+          connect_timeout: 5,
+          ssl: isLocal ? false : "require",
+        });
+        await sql`
+          INSERT INTO public.contact_messages (name, email, message)
+          VALUES (${data.name}, ${data.email}, ${data.message});
+        `;
+        await sql.end();
+        saved = true;
+      } catch (err: unknown) {
+        console.warn("[Contact] Postgres insert error:", err);
+      }
+    }
+
+    // 2. Dual-write or fallback to Supabase if configured
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { error } = await supabase.from("contact_messages").insert(data);
+      if (!error) saved = true;
+    } catch {
+      // Supabase is optional in localdb mode
+    }
+
+    if (saved) return { ok: true };
+    return { ok: false, error: "Failed to send message" };
+  });
+
 const field =
   "w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground outline-none focus:border-ring";
 
@@ -38,8 +83,12 @@ function ContactPage() {
       return setErrors(Object.fromEntries(p.error.issues.map((i) => [i.path[0], i.message])));
     setErrors({});
     setStatus("saving");
-    const { error } = await supabase.from("contact_messages").insert(p.data);
-    setStatus(error ? "error" : "done");
+    try {
+      const res = await submitContactMessageServerFn({ data: p.data });
+      setStatus(res.ok ? "done" : "error");
+    } catch {
+      setStatus("error");
+    }
   };
   const channels = [
     ["WhatsApp", PHONE_DISPLAY, whatsappUrl("Hi HackX")],

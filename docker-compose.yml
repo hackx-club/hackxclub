@@ -1,6 +1,6 @@
 services:
   # ----------------------------------------------------------------------------
-  # Caddy Reverse Proxy (Automatic HTTPS, SSL certificates, and HTTP/3)
+  # Caddy Reverse Proxy (Automatic HTTPS, SSL certificates, HTTP/3 & WAF)
   # ----------------------------------------------------------------------------
   caddy:
     image: caddy:2-alpine
@@ -17,6 +17,8 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data # Holds TLS certificates across container restarts
       - caddy_config:/config
+    networks:
+      - frontend_net
     depends_on:
       - app
 
@@ -43,6 +45,9 @@ services:
       VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:-https://dummy.supabase.co}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${VITE_SUPABASE_PUBLISHABLE_KEY:-dummy_key}
       VITE_SUPABASE_PROJECT_ID: ${VITE_SUPABASE_PROJECT_ID:-dummy_id}
+    networks:
+      - frontend_net
+      - backend_net
     depends_on:
       postgres:
         condition: service_healthy
@@ -68,6 +73,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - backend_net
+
+# ------------------------------------------------------------------------------
+# Docker Layer Firewall (Network Segmentation)
+# ------------------------------------------------------------------------------
+networks:
+  frontend_net:
+    driver: bridge
+  backend_net:
+    driver: bridge
+    internal: true # Isolated internal network: blocks external ingress/egress for the database layer
 
 volumes:
   postgres_data:

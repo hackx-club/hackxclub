@@ -5,7 +5,41 @@
 
 # Domain configured via environment variable (default: localhost for local testing)
 {$DOMAIN:localhost} {
-    # Reverse proxy to the TanStack Start app container
+    # --------------------------------------------------------------------------
+    # Application Firewall (WAF) - Defense-in-Depth Layer
+    # --------------------------------------------------------------------------
+    # Limit max request body size to 10MB to mitigate buffer overflows and DoS
+    request_body {
+        max_size 10MB
+    }
+
+    # Block sensitive paths, dotfiles, Git, env files, and configuration exposures
+    @blocked_paths {
+        path */.*
+        path */.env*
+        path */.git*
+        path */.docker*
+        path */docker-compose*
+        path */wp-admin* */wp-content* */wp-includes*
+        path */phpmyadmin* */pma* */adminer*
+        path *.php *.asp *.aspx *.jsp *.cgi
+        path */xmlrpc.php
+    }
+    respond @blocked_paths 403 {
+        body "Forbidden by Application Security Policy"
+    }
+
+    # Block automated vulnerability scanners and malicious crawlers
+    @malicious_bots {
+        header_regexp User-Agent "(?i)(sqlmap|nikto|wpscan|masscan|zgrab|acunetix|dirbuster|nmap|morfeus)"
+    }
+    respond @malicious_bots 403 {
+        body "Access Denied"
+    }
+
+    # --------------------------------------------------------------------------
+    # Reverse Proxy to TanStack Start App Container
+    # --------------------------------------------------------------------------
     reverse_proxy app:3000 {
         header_up Host {host}
         header_up X-Real-IP {remote_host}
@@ -16,11 +50,16 @@
     # Enable modern compression algorithms
     encode zstd gzip
 
-    # Essential security headers
+    # --------------------------------------------------------------------------
+    # Hardened HTTP Security Headers
+    # --------------------------------------------------------------------------
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
         X-Content-Type-Options "nosniff"
         X-Frame-Options "DENY"
         Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+        X-XSS-Protection "1; mode=block"
+        -Server
     }
 }

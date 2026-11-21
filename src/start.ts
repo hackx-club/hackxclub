@@ -3,11 +3,17 @@ import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/r
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
-const errorMiddleware = createMiddleware().server(async ({ next }) => {
+const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
   try {
     return await next();
   } catch (error) {
     if (error != null && typeof error === "object" && "statusCode" in error) {
+      throw error;
+    }
+    // Only return HTML error page for browser document navigation (text/html).
+    // Server function RPC calls must rethrow so the client receives a structured JSON error.
+    const accept = request?.headers?.get("accept") || "";
+    if (!accept.includes("text/html")) {
       throw error;
     }
     console.error(error);

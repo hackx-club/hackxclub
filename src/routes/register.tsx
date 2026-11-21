@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { useState, type FormEvent } from "react";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, Section } from "@/components/layout/SiteChrome";
 import { whatsappUrl } from "@/config/site";
 import { registerOptions, tracks } from "@/content/site-content";
@@ -33,6 +33,58 @@ export const registrationSchema = z.object({
   track: z.string().max(60).optional().default(""),
 });
 
+export const submitRegistrationServerFn = createServerFn({ method: "POST" })
+  .validator((d: z.infer<typeof registrationSchema>) => d)
+  .handler(async ({ data }) => {
+    let saved = false;
+
+    // 1. Try local/direct Postgres first
+    const dbUrl = process.env["DATABASE_URL"] || process.env["LOVABLE_DB_MIGRATION_URL"];
+    if (dbUrl) {
+      try {
+        const postgres = (await import("postgres")).default;
+        const isLocal =
+          dbUrl.includes("localhost") ||
+          dbUrl.includes("127.0.0.1") ||
+          dbUrl.includes("@postgres:");
+        const sql = postgres(dbUrl, {
+          max: 1,
+          idle_timeout: 5,
+          connect_timeout: 5,
+          ssl: isLocal ? false : "require",
+        });
+        await sql`
+          INSERT INTO public.registrations (name, college, phone, email, team_size, track, event_slug)
+          VALUES (
+            ${data.name},
+            ${data.college},
+            ${data.phone},
+            ${data.email},
+            ${data.team_size},
+            ${data.track || ""},
+            ${data.event_slug}
+          );
+        `;
+        await sql.end();
+        saved = true;
+      } catch (err: unknown) {
+        console.warn("[Register] Postgres insert error:", err);
+      }
+    }
+
+    // 2. Dual-write or fallback to Supabase if configured
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { error } = await supabase.from("registrations").insert(data);
+      if (!error) saved = true;
+    } catch {
+      // Supabase is optional in localdb mode
+    }
+
+    if (saved) return { ok: true };
+    return { ok: false, error: "Failed to record registration" };
+  });
+
 const field =
   "w-full rounded-lg border border-input bg-background px-4 py-3 text-foreground outline-none focus:border-ring";
 
@@ -50,8 +102,12 @@ function RegisterPage() {
     }
     setErrors({});
     setStatus("saving");
-    const { error } = await supabase.from("registrations").insert(parsed.data);
-    setStatus(error ? "error" : "done");
+    try {
+      const res = await submitRegistrationServerFn({ data: parsed.data });
+      setStatus(res.ok ? "done" : "error");
+    } catch {
+      setStatus("error");
+    }
   };
 
   const wa = (
