@@ -81,7 +81,26 @@ export const submitRegistrationServerFn = createServerFn({ method: "POST" })
       // Supabase is optional in localdb mode
     }
 
-    if (saved) return { ok: true };
+    if (saved) {
+      // Send branded registration confirmation email via Gmail SMTP in background
+      try {
+        const { sendRegistrationConfirmationEmail } = await import("@/lib/email.server");
+        sendRegistrationConfirmationEmail({
+          to: data.email,
+          name: data.name,
+          college: data.college,
+          teamSize: data.team_size,
+          track: data.track,
+          eventSlug: data.event_slug,
+        }).catch((emailErr) => {
+          console.error("[Register] Asynchronous email dispatch failed:", emailErr);
+        });
+      } catch (err) {
+        console.warn("[Register] Could not load email server module:", err);
+      }
+
+      return { ok: true };
+    }
     return { ok: false, error: "Failed to record registration" };
   });
 
