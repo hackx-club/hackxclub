@@ -190,10 +190,20 @@
   padding-top: 0;
 }
 
+@utility hero-particle-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  pointer-events: none;
+}
+
 @utility hero-poster-x {
   position: absolute;
   top: 25.5%;
-  left: 49.5%;
+  left: 50%;
   transform: translate(-50%, -50%) perspective(700px) rotateY(-17deg) rotateX(7deg);
   font-size: min(40vh, 62vw);
   line-height: 1;

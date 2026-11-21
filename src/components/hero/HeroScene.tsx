@@ -39,6 +39,13 @@ export default function HeroScene() {
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     const canvas = renderer.domElement;
     canvas.className = "hero-particle-canvas";
+    canvas.style.position = "absolute";
+    canvas.style.top = "0";
+    canvas.style.left = "0";
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.display = "block";
+    canvas.style.pointerEvents = "none";
     host.appendChild(canvas);
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
@@ -105,14 +112,14 @@ export default function HeroScene() {
       const rect = host.getBoundingClientRect();
       width = Math.max(1, rect.width);
       height = Math.max(1, rect.height);
-      renderer.setSize(width, height, false);
+      renderer.setSize(width, height, true);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       // Preserve the current page copy; restore only the original solid X artwork.
       const scale = Math.min(height * 0.3, width * 0.44) / (height * 0.64);
       group.scale.setScalar(scale);
-      group.position.x = -0.06;
-      group.position.y = 1.55;
+      group.position.x = 0;
+      group.position.y = 1.5;
     };
     const onMove = (event: PointerEvent) => {
       const rect = host.getBoundingClientRect();
