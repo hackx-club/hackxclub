@@ -37,6 +37,7 @@ export const submitRegistrationServerFn = createServerFn({ method: "POST" })
   .validator((d: z.infer<typeof registrationSchema>) => d)
   .handler(async ({ data }) => {
     let saved = false;
+    const reasons: string[] = [];
 
     // 1. Try local/direct Postgres first
     const dbUrl = process.env["DATABASE_URL"] || process.env["LOVABLE_DB_MIGRATION_URL"];
@@ -69,6 +70,9 @@ export const submitRegistrationServerFn = createServerFn({ method: "POST" })
         saved = true;
       } catch (err: unknown) {
         console.warn("[Register] Postgres insert error:", err);
+        reasons.push(
+          err instanceof Error ? `Database: ${err.message}` : "Database insert failed",
+        );
       }
     }
 
@@ -76,9 +80,16 @@ export const submitRegistrationServerFn = createServerFn({ method: "POST" })
     try {
       const { supabase } = await import("@/integrations/supabase/client");
       const { error } = await supabase.from("registrations").insert(data);
-      if (!error) saved = true;
-    } catch {
+      if (!error) {
+        saved = true;
+      } else {
+        reasons.push(`Supabase: ${error.message}`);
+      }
+    } catch (err: unknown) {
       // Supabase is optional in localdb mode
+      reasons.push(
+        err instanceof Error ? `Supabase: ${err.message}` : "Supabase insert failed",
+      );
     }
 
     if (saved) {
@@ -101,7 +112,12 @@ export const submitRegistrationServerFn = createServerFn({ method: "POST" })
 
       return { ok: true };
     }
-    return { ok: false, error: "Failed to record registration" };
+    return {
+      ok: false,
+      error: reasons.length
+        ? reasons.join(" · ")
+        : "Failed to record registration (no database reachable)",
+    };
   });
 
 const field =
@@ -110,6 +126,7 @@ const field =
 function RegisterPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
+  const [saveError, setSaveError] = useState("");
   const [event, setEvent] = useState("hackx-1-0");
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
@@ -120,11 +137,18 @@ function RegisterPage() {
       return;
     }
     setErrors({});
+    setSaveError("");
     setStatus("saving");
     try {
       const res = await submitRegistrationServerFn({ data: parsed.data });
-      setStatus(res.ok ? "done" : "error");
-    } catch {
+      if (res.ok) {
+        setStatus("done");
+      } else {
+        setSaveError(res.error || "Unknown error");
+        setStatus("error");
+      }
+    } catch (err: unknown) {
+      setSaveError(err instanceof Error ? err.message : "Network or server error");
       setStatus("error");
     }
   };
@@ -217,8 +241,9 @@ function RegisterPage() {
               </label>
             )}
             {status === "error" && (
-              <p className="text-sm text-destructive">
-                Couldn't save. Try again or register on WhatsApp.
+              <p className="text-sm text-destructive" role="alert">
+                Couldn't save{saveError ? `: ${saveError}` : ""}. Try again or register on
+                WhatsApp.
               </p>
             )}
             <button
