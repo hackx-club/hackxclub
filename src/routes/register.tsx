@@ -93,24 +93,22 @@ export const submitRegistrationServerFn = createServerFn({ method: "POST" })
     }
 
     if (saved) {
-      // Send branded registration confirmation email via Gmail SMTP in background
+      // Await sending before returning: serverless hosts may stop background work.
       try {
-        const { sendRegistrationConfirmationEmail } = await import("@/lib/email.server");
-        sendRegistrationConfirmationEmail({
+        const { completeRegistrationConfirmation } = await import("@/lib/registration-confirmation.server");
+        return await completeRegistrationConfirmation({
           to: data.email,
           name: data.name,
           college: data.college,
           teamSize: data.team_size,
           track: data.track,
           eventSlug: data.event_slug,
-        }).catch((emailErr) => {
-          console.error("[Register] Asynchronous email dispatch failed:", emailErr);
         });
       } catch (err) {
         console.warn("[Register] Could not load email server module:", err);
       }
 
-      return { ok: true };
+      return { ok: true, emailSent: false };
     }
     return {
       ok: false,
@@ -127,6 +125,7 @@ function RegisterPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
   const [saveError, setSaveError] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
   const [event, setEvent] = useState("hackx-1-0");
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
@@ -142,6 +141,7 @@ function RegisterPage() {
     try {
       const res = await submitRegistrationServerFn({ data: parsed.data });
       if (res.ok) {
+        setEmailSent(res.emailSent);
         setStatus("done");
       } else {
         setSaveError(res.error || "Unknown error");
@@ -177,6 +177,11 @@ function RegisterPage() {
             <h2 className="text-3xl font-semibold tracking-tight">You're in.</h2>
             <p className="mt-3 text-muted-foreground">
               We've saved your registration. Message us on WhatsApp to get event updates.
+            </p>
+            <p className="mt-3 text-muted-foreground" role="status">
+              {emailSent
+                ? "Your confirmation email has been sent. Check your inbox or spam folder."
+                : "Your registration is saved, but the confirmation email couldn't be sent. Contact us on WhatsApp for confirmation."}
             </p>
             <div className="mt-8">{wa}</div>
           </SpotlightCard>

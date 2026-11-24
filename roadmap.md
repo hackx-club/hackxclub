@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Await registration confirmation emails using existing external SMTP settings and report email failures separately; 12 tests passed and a real preview registration was saved and read back. Live Vercel inbox delivery is unverified because its SMTP settings are unavailable here.
+
 - [x] Swap Sujith and Jagankumar's displayed names again and add Sriganth with a locally packaged, compressed portrait.
 
 - [x] Speed up Home headline, entrances, X spin and pointer response without changing the logo.

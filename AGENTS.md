@@ -23,3 +23,4 @@
 - The home hero uses vanilla three.js solid rounded chrome bars (RoundedBoxGeometry) with local studio reflections and a pointer-following light; semantic palette tokens and a shared static X fallback preserve the same artwork without WebGL or motion. Keep the canvas pointer-events:none so navigation remains accessible.
 - Portraits are compressed WebP files imported from src/assets, not CDN pointer URLs, so exported deployments serve their own images; retain legacy pointers for earlier published versions.
 - Outside Lovable, Nitro uses NITRO_PRESET when provided, Vercel when detected, and node-server otherwise; this keeps one application deployable without changing preview configuration.
+- External SMTP registration confirmations must be awaited after saving, with bounded connection timeouts and a separate email outcome; serverless hosts can discard detached sends and email failure must not encourage duplicate registrations.

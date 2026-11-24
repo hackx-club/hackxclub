@@ -38,8 +38,7 @@ export function pageHead(
     });
   }
 
-  const defaultImage = `${site.url}/og-image.png`;
-  const shareImage = o.image ?? defaultImage;
+  const shareImage = o.image?.startsWith("https://") ? o.image : undefined;
 
   return {
     meta: [
@@ -58,11 +57,11 @@ export function pageHead(
       { property: "og:url", content: url },
       { property: "og:site_name", content: site.name },
       { property: "og:locale", content: "en_IN" },
-      { property: "og:image", content: shareImage },
+      ...(shareImage ? [{ property: "og:image", content: shareImage }] : []),
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
-      { name: "twitter:image", content: shareImage },
+      ...(shareImage ? [{ name: "twitter:image", content: shareImage }] : []),
     ],
     links: [{ rel: "canonical", href: url }],
     scripts: ld.map((d) => ({ type: "application/ld+json", children: JSON.stringify(d) })),

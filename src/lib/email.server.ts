@@ -1,4 +1,12 @@
 import nodemailer from "nodemailer";
+import { hackx1, socials } from "@/content/site-content";
+
+function escapeHtml(value: string) {
+  return value.replace(/[&<>"']/g, (character) => {
+    const entities: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+    return entities[character] ?? character;
+  });
+}
 
 export function getEmailTransporter() {
   const user = process.env["SMTP_USER"] || "clubhackx@gmail.com";
@@ -15,6 +23,9 @@ export function getEmailTransporter() {
     host: process.env["SMTP_HOST"] || "smtp.gmail.com",
     port,
     secure,
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 15000,
     auth: {
       user,
       pass,
@@ -38,6 +49,11 @@ export async function sendRegistrationConfirmationEmail(params: RegistrationEmai
   }
 
   const fromAddress = process.env["EMAIL_FROM"] || "HackX Club <clubhackx@gmail.com>";
+  const isEvent = params.eventSlug === hackx1.slug;
+  const eventName = isEvent ? hackx1.name : "HackX";
+  const name = escapeHtml(params.name);
+  const college = escapeHtml(params.college);
+  const track = escapeHtml(params.track || "");
 
   const htmlContent = `
 <!DOCTYPE html>
@@ -64,42 +80,42 @@ export async function sendRegistrationConfirmationEmail(params: RegistrationEmai
   <body>
     <div class="container">
       <div class="header">
-        <div class="logo">HackX 1.0</div>
+         <div class="logo">${eventName}</div>
         <div class="badge">Registration Confirmed</div>
       </div>
       <div class="content">
-        <p>Hey <strong>${params.name}</strong>,</p>
-        <p>You're officially registered for <strong>HackX 1.0</strong>! We're thrilled to have you and your team joining us.</p>
+         <p>Hey <strong>${name}</strong>,</p>
+         <p>${isEvent ? `You're officially registered for <strong>${eventName}</strong>!` : "We've saved your registration with no specific event selected."}</p>
         
         <div class="card">
           <div class="card-row">
             <span class="card-label">Participant:</span>
-            <span class="card-value">${params.name}</span>
+             <span class="card-value">${name}</span>
           </div>
           <div class="card-row">
             <span class="card-label">Institution:</span>
-            <span class="card-value">${params.college}</span>
+             <span class="card-value">${college}</span>
           </div>
           <div class="card-row">
             <span class="card-label">Team Size:</span>
             <span class="card-value">${params.teamSize} Member(s)</span>
           </div>
           ${
-            params.track
+             isEvent && track
               ? `<div class="card-row">
             <span class="card-label">Track:</span>
-            <span class="card-value">${params.track}</span>
+             <span class="card-value">${track}</span>
           </div>`
               : ""
           }
-          <div class="card-row">
+           ${isEvent ? `<div class="card-row">
             <span class="card-label">Event Date:</span>
-            <span class="card-value">December 28, 2026</span>
-          </div>
+             <span class="card-value">${hackx1.date}</span>
+           </div>` : ""}
         </div>
 
-        <p>To receive live updates, schedule announcements, and connect with mentors and peers, join our official community:</p>
-        <a href="https://wa.me/919715803110?text=Hi%20HackX%2C%20I%20have%20registered%20for%20HackX%201.0" class="btn">Connect on WhatsApp</a>
+         <p>For questions about your registration, contact the HackX team:</p>
+         <a href="https://wa.me/919715803110" class="btn">Contact on WhatsApp</a>
 
         <p>If you have any questions or want to update your team members, feel free to reply directly to this email (<a href="mailto:clubhackx@gmail.com" style="color: #60a5fa;">clubhackx@gmail.com</a>).</p>
       </div>
@@ -115,13 +131,14 @@ export async function sendRegistrationConfirmationEmail(params: RegistrationEmai
   try {
     const info = await transporter.sendMail({
       from: fromAddress,
+      replyTo: socials.email,
       to: params.to,
-      subject: "Registration Confirmed: Welcome to HackX 1.0! 🚀",
-      text: `Hey ${params.name},\n\nYou are officially registered for HackX 1.0!\n\nInstitution: ${params.college}\nTeam Size: ${params.teamSize}\nTrack: ${params.track || "General"}\nEvent Date: December 28, 2026\n\nFor questions, reply directly to this email or reach us at clubhackx@gmail.com.\n\nBest,\nHackX Club Team`,
+      subject: `Registration Confirmed: ${eventName}`,
+      text: `Hey ${params.name},\n\n${isEvent ? `You are officially registered for ${eventName}!` : "We've saved your registration with no specific event selected."}\n\nInstitution: ${params.college}\nTeam Size: ${params.teamSize}${isEvent ? `\nTrack: ${params.track || "Not selected"}\nEvent Date: ${hackx1.date}` : ""}\n\nFor questions, reply directly to this email or reach us at ${socials.email}.\n\nBest,\nHackX Club Team`,
       html: htmlContent,
     });
     console.log(
-      `[Email] Registration confirmation sent to ${params.to} (MessageId: ${info.messageId})`,
+      "[Email] Registration confirmation accepted by mail server",
     );
     return { ok: true, messageId: info.messageId };
   } catch (err: unknown) {
