@@ -184,7 +184,10 @@ export const Route = createFileRoute("/admin")({
       { title: "Admin Portal | HackX" },
       { name: "description", content: "Private HackX registration and contact administration." },
       { property: "og:title", content: "Admin Portal | HackX" },
-      { property: "og:description", content: "Private HackX registration and contact administration." },
+      {
+        property: "og:description",
+        content: "Private HackX registration and contact administration.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, nofollow" },

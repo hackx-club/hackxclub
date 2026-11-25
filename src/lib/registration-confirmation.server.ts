@@ -9,7 +9,10 @@ export async function completeRegistrationConfirmation(params: RegistrationEmail
     const result = await sendRegistrationConfirmationEmail(params);
     return { ok: true as const, emailSent: result.ok };
   } catch (error) {
-    console.error("[Register] Confirmation email failed:", error instanceof Error ? error.message : "Unknown error");
+    console.error(
+      "[Register] Confirmation email failed:",
+      error instanceof Error ? error.message : "Unknown error",
+    );
     return { ok: true as const, emailSent: false };
   }
 }

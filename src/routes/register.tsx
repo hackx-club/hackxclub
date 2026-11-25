@@ -70,9 +70,7 @@ export const submitRegistrationServerFn = createServerFn({ method: "POST" })
         saved = true;
       } catch (err: unknown) {
         console.warn("[Register] Postgres insert error:", err);
-        reasons.push(
-          err instanceof Error ? `Database: ${err.message}` : "Database insert failed",
-        );
+        reasons.push(err instanceof Error ? `Database: ${err.message}` : "Database insert failed");
       }
     }
 
@@ -87,15 +85,14 @@ export const submitRegistrationServerFn = createServerFn({ method: "POST" })
       }
     } catch (err: unknown) {
       // Supabase is optional in localdb mode
-      reasons.push(
-        err instanceof Error ? `Supabase: ${err.message}` : "Supabase insert failed",
-      );
+      reasons.push(err instanceof Error ? `Supabase: ${err.message}` : "Supabase insert failed");
     }
 
     if (saved) {
       // Await sending before returning: serverless hosts may stop background work.
       try {
-        const { completeRegistrationConfirmation } = await import("@/lib/registration-confirmation.server");
+        const { completeRegistrationConfirmation } =
+          await import("@/lib/registration-confirmation.server");
         return await completeRegistrationConfirmation({
           to: data.email,
           name: data.name,
@@ -247,8 +244,7 @@ function RegisterPage() {
             )}
             {status === "error" && (
               <p className="text-sm text-destructive" role="alert">
-                Couldn't save{saveError ? `: ${saveError}` : ""}. Try again or register on
-                WhatsApp.
+                Couldn't save{saveError ? `: ${saveError}` : ""}. Try again or register on WhatsApp.
               </p>
             )}
             <button

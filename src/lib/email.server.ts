@@ -3,7 +3,13 @@ import { hackx1, socials } from "@/content/site-content";
 
 function escapeHtml(value: string) {
   return value.replace(/[&<>"']/g, (character) => {
-    const entities: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+    const entities: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
     return entities[character] ?? character;
   });
 }
@@ -101,17 +107,21 @@ export async function sendRegistrationConfirmationEmail(params: RegistrationEmai
             <span class="card-value">${params.teamSize} Member(s)</span>
           </div>
           ${
-             isEvent && track
+            isEvent && track
               ? `<div class="card-row">
             <span class="card-label">Track:</span>
              <span class="card-value">${track}</span>
           </div>`
               : ""
           }
-           ${isEvent ? `<div class="card-row">
+           ${
+             isEvent
+               ? `<div class="card-row">
             <span class="card-label">Event Date:</span>
              <span class="card-value">${hackx1.date}</span>
-           </div>` : ""}
+           </div>`
+               : ""
+           }
         </div>
 
          <p>For questions about your registration, contact the HackX team:</p>
@@ -137,9 +147,7 @@ export async function sendRegistrationConfirmationEmail(params: RegistrationEmai
       text: `Hey ${params.name},\n\n${isEvent ? `You are officially registered for ${eventName}!` : "We've saved your registration with no specific event selected."}\n\nInstitution: ${params.college}\nTeam Size: ${params.teamSize}${isEvent ? `\nTrack: ${params.track || "Not selected"}\nEvent Date: ${hackx1.date}` : ""}\n\nFor questions, reply directly to this email or reach us at ${socials.email}.\n\nBest,\nHackX Club Team`,
       html: htmlContent,
     });
-    console.log(
-      "[Email] Registration confirmation accepted by mail server",
-    );
+    console.log("[Email] Registration confirmation accepted by mail server");
     return { ok: true, messageId: info.messageId };
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : "Unknown error";
